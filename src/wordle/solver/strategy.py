@@ -12,6 +12,7 @@ from wordle.solver.constraints import SolverConstraints
 
 @dataclass(frozen=True)
 class SolverConfig:
+    mode: str = "a"
     investigate_limit: int = 3
     threshold_known_letters: int = 3
     threshold_locked_positions: int = 2
@@ -82,6 +83,8 @@ def _should_use_hail_mary(
     candidate_count: int,
     config: SolverConfig,
 ) -> bool:
+    if config.mode == "b":
+        return True
     if turn >= 3:
         return True
     known_letters = len(constraints.min_counts)
@@ -100,6 +103,9 @@ def solve_secret(
     config: SolverConfig | None = None,
 ) -> SolverRunResult:
     cfg = config or SolverConfig()
+    if cfg.mode not in {"a", "b"}:
+        raise ValueError("solver mode must be 'a' or 'b'")
+
     constraints = SolverConstraints()
     tried: set[str] = set()
     words_tried: list[str] = []
