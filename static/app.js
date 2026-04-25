@@ -68,7 +68,8 @@ class PlayGame {
     this.currentCol = 0;
     this.currentInput = [];
     this.status = 'idle';
-    this.keyMap = {}; // letter -> best score seen
+    this._busy = false;        // locks input during API call + animation
+    this.keyMap = {};           // letter -> best score seen
 
     this.board = document.getElementById('play-board');
     this.toast = document.getElementById('play-toast');
@@ -85,6 +86,11 @@ class PlayGame {
     this.newGame();
   }
 
+  _isPlayTabActive() {
+    const panel = document.getElementById('tab-play');
+    return panel && panel.classList.contains('active');
+  }
+
   _buildBoard() {
     this.board.innerHTML = '';
     this.tiles = [];
@@ -98,6 +104,16 @@ class PlayGame {
         row.push(tile);
       }
       this.tiles.push(row);
+    }
+    this._highlightActiveRow();
+  }
+
+  _highlightActiveRow() {
+    for (let r = 0; r < ROWS; r++) {
+      this.tiles[r].forEach(t => t.classList.remove('active-row'));
+    }
+    if (this.currentRow < ROWS && this.status === 'in_progress') {
+      this.tiles[this.currentRow].forEach(t => t.classList.add('active-row'));
     }
   }
 
@@ -122,11 +138,17 @@ class PlayGame {
 
   _bindKeys() {
     this._kbHandler = (e) => {
+      // Only handle keys when Play tab is active
+      if (!this._isPlayTabActive()) return;
       if (e.ctrlKey || e.metaKey || e.altKey) return;
+      // Don't capture if user is focused on an input/textarea
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       const key = e.key;
       if (key === 'Enter' || key === 'Backspace') {
+        e.preventDefault();
         this._handleKey(key);
       } else if (/^[a-zA-Z]$/.test(key)) {
+        e.preventDefault();
         this._handleKey(key.toLowerCase());
       }
     };
@@ -134,6 +156,7 @@ class PlayGame {
   }
 
   _handleKey(key) {
+    if (this._busy) return;
     if (this.status !== 'in_progress') return;
     if (key === 'Backspace') {
       if (this.currentCol > 0) {
@@ -141,20 +164,25 @@ class PlayGame {
         this.currentInput.pop();
         const tile = this.tiles[this.currentRow][this.currentCol];
         tile.textContent = '';
-        tile.classList.remove('filled', 'pop');
+        tile.classList.remove('filled');
       }
     } else if (key === 'Enter') {
       this._submitGuess();
     } else if (this.currentCol < COLS && /^[a-z]$/.test(key)) {
       const tile = this.tiles[this.currentRow][this.currentCol];
       tile.textContent = key.toUpperCase();
-      tile.classList.add('filled', 'pop');
+      tile.classList.add('filled');
+      // Pop animation
+      tile.classList.remove('pop');
+      void tile.offsetWidth;
+      tile.classList.add('pop');
       this.currentInput.push(key);
       this.currentCol++;
     }
   }
 
   async newGame() {
+    this._busy = true;
     this.newBtn.disabled = true;
     try {
       const data = await apiFetch('/games', { method: 'POST' });
@@ -171,6 +199,7 @@ class PlayGame {
     } catch (e) {
       showToast(this.toast, e.message, 'error');
     } finally {
+      this._busy = false;
       this.newBtn.disabled = false;
     }
   }
@@ -181,7 +210,10 @@ class PlayGame {
       showToast(this.toast, 'Not enough letters', 'error', 1500);
       return;
     }
+
+    this._busy = true;  // lock all input
     const guess = this.currentInput.join('');
+
     try {
       const data = await apiFetch(`/games/${this.gameId}/guesses`, {
         method: 'POST',
@@ -189,33 +221,57 @@ class PlayGame {
       });
       await this._revealRow(this.currentRow, guess, data.score);
       this._updateKeyboard(guess, data.score);
+
       this.currentRow++;
       this.currentCol = 0;
       this.currentInput = [];
       this.status = data.status;
 
       if (data.status === 'solved') {
-        showToast(this.toast, '🎉 Solved!', 'success', 4000);
+        await this._bounceRow(this.currentRow - 1);
+        const turns = this.currentRow;
+        const messages = ['Genius', 'Magnificent', 'Impressive', 'Splendid', 'Great', 'Phew'];
+        showToast(this.toast, messages[turns - 1] || 'Solved!', 'success', 4000);
         this.shareBtn.style.display = '';
         this._storeSolved(data.history, data.secret);
       } else if (data.status === 'failed') {
-        showToast(this.toast, `The word was ${(data.secret || '?').toUpperCase()}`, 'error', 5000);
+        showToast(this.toast, (data.secret || '?').toUpperCase(), 'error', 5000);
       }
+
+      this._highlightActiveRow();
     } catch (e) {
       this._shakeRow(this.currentRow);
       showToast(this.toast, e.message, 'error');
+    } finally {
+      this._busy = false;
     }
   }
 
   async _revealRow(row, guess, scores) {
+    const FLIP_DURATION = 500;
+    const STAGGER = 250;  // delay between each tile starting its flip
+
     for (let c = 0; c < COLS; c++) {
       const tile = this.tiles[row][c];
       tile.textContent = guess[c].toUpperCase();
+      // Set score data attribute — CSS picks up --flip-color from [data-score]
       tile.dataset.score = scores[c];
-      await sleep(FLIP_DELAY * c);
+      // Stagger: wait before starting each tile's flip
+      if (c > 0) await sleep(STAGGER);
       tile.classList.add('flip');
     }
-    await sleep(FLIP_DELAY * COLS);
+    // Wait for the last tile to finish its flip animation
+    await sleep(FLIP_DURATION);
+  }
+
+  async _bounceRow(row) {
+    const BOUNCE_STAGGER = 80;
+    for (let c = 0; c < COLS; c++) {
+      const tile = this.tiles[row][c];
+      tile.classList.add('bounce');
+      await sleep(BOUNCE_STAGGER);
+    }
+    await sleep(500);
   }
 
   _shakeRow(row) {
@@ -253,7 +309,7 @@ class PlayGame {
     const blocks = this._lastHistory.map(item =>
       item.score.map(s => s === 2 ? '🟩' : s === 1 ? '🟨' : '⬛').join('')
     ).join('\n');
-    const text = `Wordle — ${this._lastHistory.length}/6\n\n${blocks}`;
+    const text = `Wordle ${this._lastHistory.length}/6\n\n${blocks}`;
     navigator.clipboard?.writeText(text).then(() =>
       showToast(this.toast, 'Copied to clipboard', 'success', 1500)
     );

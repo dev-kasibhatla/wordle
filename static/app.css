@@ -137,7 +137,7 @@ header {
 }
 
 .tile.filled { border-color: var(--muted); }
-.tile.active-row { border-color: #555566; }
+.tile.active-row { border-color: #666677; }
 
 /* flip animation */
 .tile.flip {
@@ -147,13 +147,24 @@ header {
 @keyframes tile-flip {
   0%   { transform: rotateX(0deg); }
   49%  { transform: rotateX(-90deg); }
-  50%  { transform: rotateX(-90deg); background: var(--flip-color); border-color: var(--flip-color); }
-  100% { transform: rotateX(0deg);  background: var(--flip-color); border-color: var(--flip-color); }
+  50%  { transform: rotateX(-90deg); background: var(--flip-color); border-color: var(--flip-color); color: #fff; }
+  100% { transform: rotateX(0deg);  background: var(--flip-color); border-color: var(--flip-color); color: #fff; }
 }
 
 .tile[data-score="2"] { --flip-color: var(--green); }
 .tile[data-score="1"] { --flip-color: var(--yellow); }
 .tile[data-score="0"] { --flip-color: var(--grey-tile); }
+
+/* bounce on win */
+.tile.bounce {
+  animation: bounce 0.6s ease;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  30%      { transform: translateY(-20px); }
+  60%      { transform: translateY(-8px); }
+  80%      { transform: translateY(-2px); }
+}
 
 /* shake on invalid */
 .tile.shake { animation: shake 0.4s ease; }
@@ -221,25 +232,34 @@ header {
 
 /* ── Toast ───────────────────────────────────────────────────────────── */
 .toast {
-  min-height: 36px;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  z-index: 100;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.15s ease, transform 0.15s ease;
   pointer-events: none;
+  white-space: nowrap;
 }
 
-.toast.visible { opacity: 1; }
-.toast.error   { border-color: #c94c4c; color: #ff8080; }
-.toast.success { border-color: var(--green); color: var(--green); }
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast.error   { background: var(--text); color: var(--bg); }
+.toast.success { background: var(--text); color: var(--bg); }
 
 /* ── Actions ─────────────────────────────────────────────────────────── */
 .actions {
