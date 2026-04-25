@@ -250,11 +250,12 @@ class PlayGame {
   async _revealRow(row, guess, scores) {
     const FLIP_DURATION = 500;
     const STAGGER = 250;  // delay between each tile starting its flip
+    const COLOR_CLASS = ['grey', 'yellow', 'green'];
 
     for (let c = 0; c < COLS; c++) {
       const tile = this.tiles[row][c];
       tile.textContent = guess[c].toUpperCase();
-      // Set score data attribute — CSS picks up --flip-color from [data-score]
+      // data-score drives --flip-color CSS variable during animation
       tile.dataset.score = scores[c];
       // Stagger: wait before starting each tile's flip
       if (c > 0) await sleep(STAGGER);
@@ -262,6 +263,13 @@ class PlayGame {
     }
     // Wait for the last tile to finish its flip animation
     await sleep(FLIP_DURATION);
+    // Permanently apply color classes so state persists after animation
+    // (animation-fill-mode:forwards with CSS vars is unreliable across browsers)
+    for (let c = 0; c < COLS; c++) {
+      const tile = this.tiles[row][c];
+      tile.classList.remove('filled', 'active-row');
+      tile.classList.add(COLOR_CLASS[scores[c]]);
+    }
   }
 
   async _bounceRow(row) {
