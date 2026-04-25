@@ -1,0 +1,43 @@
+[project]
+name = "wordle"
+version = "0.1.0"
+description = "Modular Wordle engine, API, solver, and batch evaluator"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115.0",
+  "pydantic>=2.11.0",
+  "uvicorn>=0.34.0",
+]
+
+[dependency-groups]
+dev = [
+  "httpx>=0.28.0",
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.25.0",
+]
+
+[project.scripts]
+wordle-api = "wordle.main:run_api"
+wordle-batch = "wordle.main:run_batch"
+wordle-check-dataset = "wordle.main:run_consistency_check"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = [
+  "slow: marks expensive tests",
+]
+
+[build-system]
+requires = ["setuptools>=70", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv]
+package = true
