@@ -582,4 +582,13 @@ document.addEventListener('DOMContentLoaded', () => {
   new PlayGame();
   new AutoSolve();
   new PuzzleAnalyzer();
+
+  // fetch and display version
+  fetch('/api/version')
+    .then(r => r.json())
+    .then(d => {
+      const el = document.getElementById('version-badge');
+      if (el && d.version) el.textContent = `v${d.version}`;
+    })
+    .catch(() => {});
 });

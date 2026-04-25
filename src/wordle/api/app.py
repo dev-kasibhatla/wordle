@@ -4,11 +4,17 @@ from __future__ import annotations
 
 import time
 from collections import defaultdict
+from importlib.metadata import version as _pkg_version
 from pathlib import Path
 
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+
+try:
+    APP_VERSION: str = _pkg_version("wordle")
+except Exception:
+    APP_VERSION = "dev"
 
 from wordle.api.schemas import (
     AnalyzeGuessItem,
@@ -118,6 +124,12 @@ def _solver_result_to_response(secret: str, mode: str, result: SolverResult) -> 
 def _make_router(app: FastAPI) -> APIRouter:
     router = APIRouter(prefix="/api")
 
+    # -- version ---------------------------------------------------------------
+
+    @router.get("/version")
+    def get_version() -> dict:
+        return {"version": APP_VERSION}
+
     # -- game endpoints --------------------------------------------------------
 
     @router.post("/games", response_model=GameStateResponse, status_code=201)
@@ -213,7 +225,7 @@ def _make_router(app: FastAPI) -> APIRouter:
 # ── app factory ───────────────────────────────────────────────────────────────
 
 def create_app(data: WordleData | None = None, seed: int | None = None) -> FastAPI:
-    app = FastAPI(title="Wordle", version="0.2.0", docs_url="/api/docs", redoc_url=None)
+    app = FastAPI(title="Wordle", version=APP_VERSION, docs_url="/api/docs", redoc_url=None)
     app.state.manager = GameManager(data or load_wordle_data(), seed=seed)
 
     # mount API router

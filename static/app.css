@@ -485,3 +485,18 @@ header {
   .key { height: 50px; }
   .logo { font-size: 22px; }
 }
+
+/* ── Footer / version ────────────────────────────────────────────────── */
+footer {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 8px;
+}
+
+.version-badge {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  opacity: 0.5;
+}
