@@ -8,3 +8,23 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Secrets — never commit these
+.env
+.env.local
+.env.production
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Test/CI artifacts
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
