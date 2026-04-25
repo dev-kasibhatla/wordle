@@ -246,8 +246,10 @@ def create_app(data: WordleData | None = None, seed: int | None = None) -> FastA
         except WordleRuleError as error:
             return PlayResponse(status="error", error=ErrorPayload(code=error.code, message=error.message))
 
-    # static UI
-    static_dir = Path(__file__).resolve().parents[3] / "static"
+    # static UI — prefer WORDLE_ROOT env var (set in Docker), fall back to repo layout
+    import os
+    _root = os.environ.get("WORDLE_ROOT")
+    static_dir = Path(_root) / "static" if _root else Path(__file__).resolve().parents[3] / "static"
     if static_dir.exists():
         app.mount("/assets", StaticFiles(directory=str(static_dir)), name="static")
 
