@@ -1,0 +1,41 @@
+# VCS
+.git/
+.github/
+
+# Python artifacts
+__pycache__/
+*.py[oc]
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+wheels/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Reports (generated at runtime)
+reports/
+
+# Docs
+docs/
+*.md
+LICENSE
+CONTRIBUTING.md
+README.md
+
+# Dev config
+.env
+.env.*
+*.env
+
+# Tests
+tests/
+
+# Scripts (not needed in image)
+scripts/
+
+# Notebooks / misc
+*.ipynb
+.DS_Store
