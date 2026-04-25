@@ -291,12 +291,11 @@ class PlayGame {
   }
 
   _updateKeyboard(guess, scores) {
-    const PRIORITY = { 2: 3, 1: 2, 0: 1 };
     for (let i = 0; i < guess.length; i++) {
       const letter = guess[i];
       const score = scores[i];
       const prev = this.keyMap[letter] ?? -1;
-      if (PRIORITY[score] > PRIORITY[prev]) {
+      if (score > prev) {
         this.keyMap[letter] = score;
         const el = this.keyEls[letter];
         if (el) {
