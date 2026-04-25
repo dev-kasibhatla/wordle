@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest. These are the rules.
+Thank you. These are the rules.
 
 ## Getting started
 
@@ -11,7 +11,7 @@ uv sync
 uv pip install -e .
 ```
 
-## Before you submit
+## Before submitting
 
 1. All tests must pass.
 
@@ -19,37 +19,37 @@ uv pip install -e .
    uv run pytest -m "not slow"
    ```
 
-2. Slow tests must pass if your change touches the solver or batch pipeline.
+2. Slow tests must pass if you touch solver or batch code.
 
    ```bash
    uv run pytest
    ```
 
-3. Keep changes focused. One logical change per pull request.
+3. Keep changes focused. One logical change per PR.
 
 ## Code style
 
-- Pure functions where possible. No hidden state.
-- Typed dataclasses or Pydantic models for all public contracts.
-- Validate at the boundary. Return explicit error codes, never silent failures.
+- Pure functions. No hidden state.
+- Typed dataclasses or Pydantic models for public contracts.
+- Validate at the boundary. Return explicit error codes.
 - No print statements in library code. Use return values.
-- Docstrings are optional. If you write one, keep it to one sentence.
+- Docstrings are optional. Keep to one sentence if you write one.
 
 ## Solver changes
 
-If you change solver logic, re-run the full batch for both modes and include updated solve-rate numbers in your PR description.
+Rerun the full batch for both modes and include updated solve-rate numbers in the PR.
 
 ```bash
 uv run wordle-batch --mode a
 uv run wordle-batch --mode b
 ```
 
-## Adding words
+## Data changes
 
-Do not add words to `data/5-letter-words.txt` or `data/wordle-test-dataset.csv` without a clear, verifiable source. Run `uv run wordle-check-dataset` to confirm consistency after any data change.
+Do not add words to `data/5-letter-words.txt` or `data/wordle-test-dataset.csv` without a clear, verifiable source. Run `uv run wordle-check-dataset` to verify consistency.
 
 ## Pull requests
 
-- Use a descriptive title. No "fix stuff" or "update code".
-- Include a short description of what changed and why.
-- Reference any relevant issue numbers.
+- Use a descriptive title. No "fix stuff".
+- Write a short description of what changed and why.
+- Reference any issue numbers.

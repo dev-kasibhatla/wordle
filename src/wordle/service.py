@@ -1,4 +1,4 @@
-"""Puzzle service and in-memory game management."""
+"""Game manager."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ class PlayResult:
 
 
 class GameManager:
-    """Simple in-memory game registry."""
+    """Game registry."""
 
     def __init__(self, data: WordleData, seed: int | None = None) -> None:
         self.data = data

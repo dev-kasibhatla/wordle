@@ -1,4 +1,4 @@
-"""CLI entrypoints for API, batch runner, and consistency checks."""
+"""CLI entrypoints."""
 
 from __future__ import annotations
 
@@ -47,7 +47,7 @@ async def _run_batch_async(data, concurrency, limit, config, reports_dir):
 
 
 def run_consistency_check() -> None:
-    """Verify official answers are all present in dictionary."""
+    """Verify answers exist in dictionary."""
     data = load_wordle_data()
     missing = find_missing_answers(data)
     if missing:

@@ -1,4 +1,4 @@
-"""Batch metrics aggregation."""
+"""Metrics aggregation."""
 
 from __future__ import annotations
 

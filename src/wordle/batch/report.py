@@ -19,11 +19,11 @@ def generate_markdown_report(
 
     _write_graphs(summary, graphs_dir)
 
-    mode_label = "Investigation + Hail Mary" if mode == "a" else "Hail Mary Only"
+    mode_label = "Investigation + Hail-Mary" if mode == "a" else "Hail-Mary Only"
     report_path = reports_dir / "report.md"
     with report_path.open("w", encoding="utf-8") as fh:
-        fh.write(f"# Wordle Solver Report — Mode {mode.upper()} ({mode_label})\n\n")
-        fh.write(f"Evaluated against {summary['total_puzzles']} official Wordle puzzles.\n\n")
+        fh.write(f"# Wordle Solver Report Mode {mode.upper()} ({mode_label})\n\n")
+        fh.write(f"Tested on {summary['total_puzzles']} official Wordle answers.\n\n")
         fh.write("---\n\n")
 
         fh.write("## Summary\n\n")
@@ -34,27 +34,27 @@ def generate_markdown_report(
         fh.write(f"| Solve rate | {summary['solve_rate']:.1%} |\n")
         fh.write(f"| Average turns (solved) | {summary['average_turns_solved']:.2f} |\n")
         fh.write(f"| Median turns (solved) | {summary['median_turns_solved']:.1f} |\n")
-        fh.write(f"| 90th-percentile turns | {summary['p90_turns_solved']:.1f} |\n")
+        fh.write(f"| 90th percentile turns | {summary['p90_turns_solved']:.1f} |\n")
         fh.write("\n")
 
         fh.write("## Solve Rate\n\n")
         fh.write("![Solve Rate](graphs/solve_rate.png)\n\n")
         if mode == "a":
             fh.write(
-                "Mode A uses discovery guesses for the first 3 turns to expose as many "
-                "letters as possible, then switches to the strongest surviving candidate.\n\n"
+                "Mode A learns letters in the first 3 turns, then picks the best candidate. "
+                "Discover fast, then commit.\n\n"
             )
         else:
             fh.write(
-                "Mode B skips discovery entirely. Every guess is the highest-ranked "
-                "surviving candidate from turn 1, a pure hail-mary strategy.\n\n"
+                "Mode B commits immediately. Every guess is the best candidate. "
+                "No discovery, no hesitation.\n\n"
             )
 
         fh.write("## Turns Distribution\n\n")
         fh.write("![Turns Distribution](graphs/turns_histogram.png)\n\n")
         fh.write(
             "Each bar shows how many puzzles were solved in that many turns. "
-            "Puzzles not solved within 6 turns are counted as failures.\n\n"
+            "Anything beyond turn 6 is a failure.\n\n"
         )
 
         if summary["top_failures"]:

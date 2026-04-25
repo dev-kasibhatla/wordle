@@ -1,18 +1,18 @@
 # Wordle
 
-A complete, modular Wordle engine with a REST API, a two-mode solver, and a batch evaluation pipeline.
+A complete Wordle engine. Game logic, solver, API, and evaluation tools.
 
 ---
 
 ## What is this
 
-Wordle is a word-guessing game. The player has six attempts to identify a secret five-letter word. After each guess the engine scores every letter:
+Wordle is a word-guessing game. Six attempts to find a five-letter word. Each guess is scored:
 
-- **2** — correct letter, correct position (green)
-- **1** — correct letter, wrong position (yellow)
-- **0** — letter not in the word (grey)
+- **2**: correct letter, correct position (green)
+- **1**: correct letter, wrong position (yellow)
+- **0**: letter not in word (grey)
 
-This project ships the game engine, a solver, an HTTP API, and tools to measure solver performance across all 2 315 official Wordle answers.
+Includes a game engine, two solver modes, an HTTP API, and batch evaluation across 2 315 official Wordle answers.
 
 ---
 
@@ -20,30 +20,30 @@ This project ships the game engine, a solver, an HTTP API, and tools to measure 
 
 ```
 src/wordle/
-  engine.py          — pure scoring function
-  game.py            — stateful game session
-  data.py            — word list loader and validator
-  constants.py       — shared paths and limits
-  errors.py          — typed error codes
-  service.py         — game management service
+  engine.py          scoring logic
+  game.py            game session
+  data.py            word lists
+  constants.py       paths and limits
+  errors.py          error codes
+  service.py         game service
   api/
-    app.py           — FastAPI application factory
-    schemas.py       — request/response models
+    app.py           FastAPI app
+    schemas.py       request/response types
   solver/
-    constraints.py   — letter constraint tracker
-    strategy.py      — two-mode solver logic
+    constraints.py   constraint tracking
+    strategy.py      solver modes
   batch/
-    runner.py        — async batch evaluator
-    metrics.py       — aggregation and statistics
-    report.py        — markdown report + PNG graph generation
+    runner.py        batch evaluator
+    metrics.py       statistics
+    report.py        markdown and graphs
 data/
-  5-letter-words.txt         — full guess dictionary
-  wordle-test-dataset.csv    — 2 315 official Wordle answers
+  5-letter-words.txt guess dictionary
+  wordle-test-dataset.csv official answers
 reports/
-  mode-a/            — results for investigation + hail-mary mode
-  mode-b/            — results for hail-mary-only mode
-tests/               — pytest test suite
-docs/                — spec and standards
+  mode-a/  investigation + hail-mary results
+  mode-b/  hail-mary only results
+tests/  pytest suite
+docs/   spec and standards
 ```
 
 ---
@@ -67,33 +67,31 @@ uv pip install -e .
 
 ```bash
 uv run wordle-api
-# or
-uv run python -m wordle api
 ```
 
-Starts a FastAPI server at `http://localhost:8000`. Interactive docs at `/docs`.
+FastAPI server at `http://localhost:8000`. Docs at `/docs`.
 
 **Endpoints**
 
-| Method | Path | Description |
+| Method | Path | Purpose |
 |---|---|---|
-| `POST` | `/games` | Create a new game session |
-| `POST` | `/games/{game_id}/guesses` | Submit a guess |
-| `GET` | `/games/{game_id}` | Get current game state |
+| `POST` | `/games` | Create game |
+| `POST` | `/games/{game_id}/guesses` | Submit guess |
+| `GET` | `/games/{game_id}` | Get state |
 
 ### Batch evaluator
 
-Runs the solver against all official answers and writes reports.
+Run solver against all official answers and generate reports.
 
 ```bash
-# Mode A — investigation + hail mary (default)
+# Mode A: investigation + hail-mary (default)
 uv run wordle-batch --mode a --concurrency 16
 
-# Mode B — hail mary only
+# Mode B: hail-mary only
 uv run wordle-batch --mode b --concurrency 16
 ```
 
-Results land in `reports/mode-a/` or `reports/mode-b/`.
+Results in `reports/mode-a/` or `reports/mode-b/`.
 
 ### Dataset consistency check
 
@@ -105,9 +103,9 @@ Verifies every official answer appears in the guess dictionary.
 
 ---
 
-## Wordle engine
+## Engine
 
-`engine.py` exposes one pure function:
+`engine.py` has one pure function:
 
 ```python
 from wordle.engine import score_guess
@@ -115,9 +113,9 @@ from wordle.engine import score_guess
 score_guess("crane", "cigar")  # [2, 0, 0, 1, 0]
 ```
 
-Duplicate-letter handling is exact: a letter is marked green or yellow only as many times as it appears in the secret. Extra occurrences score 0.
+Duplicate letters are scored exactly: marked green or yellow only as many times as they appear in the secret. Extras score 0.
 
-`game.py` wraps the engine in a stateful session that enforces turn limits, validates guess length, and tracks history.
+`game.py` wraps the engine with state, turn limits, validation, and history.
 
 ---
 
@@ -125,7 +123,7 @@ Duplicate-letter handling is exact: a letter is marked green or yellow only as m
 
 The solver lives in `src/wordle/solver/`. It takes the full guess dictionary and the set of valid answers, applies letter constraints after every guess, and returns the words tried, turns taken, and a trace of which mode each turn used.
 
-### Mode A — Investigation + Hail Mary
+### Mode A: Investigation + Hail-Mary
 
 ```python
 from wordle.solver.strategy import SolverConfig, solve_secret
@@ -150,79 +148,79 @@ result = solve_secret("crane", guess_words, answer_words, config=config)
 
 **Results on 2 315 official puzzles:** 98.19% solve rate, 3.76 average turns.
 
-### Mode B — Hail Mary Only
+### Mode B: Hail-Mary Only
 
 ```python
 config = SolverConfig(mode="b")
 result = solve_secret("crane", guess_words, answer_words, config=config)
 ```
 
-Every single guess is the highest-ranked surviving candidate from turn 1. No discovery phase. This converges faster when luck is with you but has a narrower margin for error.
+Every guess is the best candidate from turn 1. No discovery. Fast when lucky. Narrow margin for error.
 
-**Results on 2 315 official puzzles:** 97.49% solve rate, 4.27 average turns.
+**Results on 2 315 official puzzles:** 97.49% solve, 4.27 avg turns.
 
 ---
 
 ## Reports
 
-Each batch run writes three files to its report directory:
+Each batch run writes to its report directory:
 
 | File | Contents |
 |---|---|
-| `results.json` | Per-puzzle outcome: secret, solved, turns, words tried, mode trace |
-| `summary.json` | Aggregate stats: solve rate, histogram, average/median/p90 turns, top failures |
-| `report.md` | Human-readable summary with embedded PNG graphs |
-| `graphs/turns_histogram.png` | Bar chart of turns distribution |
-| `graphs/solve_rate.png` | Pie chart of solved vs failed |
+| `results.json` | Per-puzzle outcome and traces |
+| `summary.json` | Stats: rate, histogram, averages, failures |
+| `report.md` | Summary with embedded graphs |
+| `graphs/turns_histogram.png` | Turns distribution |
+| `graphs/solve_rate.png` | Solved vs failed |
 
 ---
 
 ## Data
 
-`data/5-letter-words.txt` — 12 972 valid five-letter English words used as the guess dictionary.
+`data/5-letter-words.txt`: 12 972 valid five-letter words.
 
-`data/wordle-test-dataset.csv` — 2 315 official Wordle answers curated from the original NYT puzzle set.
+`data/wordle-test-dataset.csv`: 2 315 official Wordle answers.
 
-All answers are guaranteed to appear in the guess dictionary (verified by `wordle-check-dataset`).
+All answers exist in the guess dictionary (verified by `wordle-check-dataset`).
 
 ---
 
 ## Tests
 
 ```bash
-# Fast tests only (< 5 s)
+# Fast tests only
 uv run pytest -m "not slow"
 
-# Full suite including hail-mary batch run (~60 s)
+# Full suite with batch run
 uv run pytest
 
 # Hail-mary suite only
 uv run pytest tests/test_hail_mary.py -m slow -v
 ```
 
-Tests are organised by layer:
+Test layers:
 
-| File | Coverage |
+| File | Covers |
 |---|---|
-| `test_engine.py` | Scoring, duplicate-letter rules |
-| `test_solver.py` | Solver modes, constraint propagation |
-| `test_batch.py` | Batch runner output and report files |
-| `test_hail_mary.py` | Full mode-B run, mode trace validation |
+| `test_engine.py` | Scoring and duplicates |
+| `test_solver.py` | Modes and constraints |
+| `test_batch.py` | Batch runner and reports |
+| `test_hail_mary.py` | Mode-B validation |
 | `test_api.py` | REST endpoints |
-| `test_dataset_consistency.py` | Answer/dictionary integrity |
+| `test_dataset_consistency.py` | Data integrity |
 
 ---
 
 ## Docs
 
-- `docs/spec.md` — full engine and API specification
-- `docs/standards.md` — coding standards and conventions
+- `docs/spec.md` Full engine and API specification
+- `docs/standards.md` Coding standards and conventions
 
 ---
 
 ## Rules
 
-- All external inputs are validated at the boundary and return explicit error codes.
-- The scoring function is pure and has no side effects.
-- The solver never mutates shared state.
-- Report directories are created on demand and never cleared automatically.
+- Validate all inputs at the boundary. Return explicit errors.
+- Scoring is pure. No side effects.
+- Solver respects immutability.
+- Report dirs are created on demand, never auto-cleared.

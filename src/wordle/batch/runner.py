@@ -1,4 +1,4 @@
-"""Async batch runner for solver evaluation."""
+"""Batch solver evaluator."""
 
 from __future__ import annotations
 
