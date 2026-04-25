@@ -231,9 +231,9 @@ header {
 .key.wide { max-width: 64px; font-size: 11px; }
 .key:active { transform: scale(0.93); }
 
-.key.green  { background: var(--green);      color: #fff; }
-.key.yellow { background: var(--yellow);     color: #fff; }
-.key.grey   { background: var(--grey-tile);  color: var(--muted); }
+.key.green  { background: var(--green);      border: 2px solid var(--green);      color: #fff; }
+.key.yellow { background: var(--yellow);     border: 2px solid var(--yellow);     color: #fff; }
+.key.grey   { background: var(--grey-tile);  border: 2px solid var(--grey-tile);  color: #fff; }
 
 /* ── Toast ───────────────────────────────────────────────────────────── */
 .toast {
