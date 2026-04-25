@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from wordle.batch.metrics import PuzzleResult, serialize_results, summarize_results
+from wordle.batch.report import generate_markdown_report
 from wordle.constants import REPORTS_DIR
 from wordle.data import WordleData
 from wordle.solver.strategy import SolverConfig, solve_secret
@@ -57,5 +58,8 @@ async def run_batch(
 
     with (reports_dir / "summary.json").open("w", encoding="utf-8") as file:
         json.dump(summary, file, indent=2)
+
+    mode = (config.mode if config else None) or "a"
+    generate_markdown_report(results, summary, reports_dir, mode=mode)
 
     return results, summary
