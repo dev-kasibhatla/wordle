@@ -16,3 +16,6 @@ def test_batch_creates_reports(tmp_path: Path):
     assert summary["total_puzzles"] == 3
     assert (tmp_path / "results.json").exists()
     assert (tmp_path / "summary.json").exists()
+    assert (tmp_path / "report.md").exists()
+    assert (tmp_path / "graphs" / "turns_histogram.png").exists()
+    assert (tmp_path / "graphs" / "solve_rate.png").exists()
