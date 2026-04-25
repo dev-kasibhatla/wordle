@@ -1,0 +1,130 @@
+{
+  "total_puzzles": 2315,
+  "solved": 2257,
+  "failed": 58,
+  "solve_rate": 0.9749460043196544,
+  "turns_histogram": {
+    "1": 1,
+    "2": 56,
+    "3": 407,
+    "4": 861,
+    "5": 722,
+    "6": 210
+  },
+  "forced_hail_mary_turn4_count": 1851,
+  "average_turns_solved": 4.274700930438636,
+  "median_turns_solved": 4,
+  "p90_turns_solved": 5.0,
+  "top_failures": [
+    {
+      "secret": "bunny",
+      "words_tried": [
+        "aback",
+        "beefy",
+        "biddy",
+        "bobby",
+        "buggy",
+        "bully"
+      ]
+    },
+    {
+      "secret": "burly",
+      "words_tried": [
+        "aback",
+        "beefy",
+        "biddy",
+        "bobby",
+        "buggy",
+        "bully"
+      ]
+    },
+    {
+      "secret": "bushy",
+      "words_tried": [
+        "aback",
+        "beefy",
+        "biddy",
+        "bobby",
+        "buggy",
+        "bully"
+      ]
+    },
+    {
+      "secret": "chart",
+      "words_tried": [
+        "aback",
+        "cease",
+        "chaff",
+        "chain",
+        "champ",
+        "chard"
+      ]
+    },
+    {
+      "secret": "craze",
+      "words_tried": [
+        "aback",
+        "cease",
+        "chafe",
+        "crane",
+        "crate",
+        "crave"
+      ]
+    },
+    {
+      "secret": "crowd",
+      "words_tried": [
+        "aback",
+        "cello",
+        "choir",
+        "crony",
+        "cross",
+        "croup"
+      ]
+    },
+    {
+      "secret": "drown",
+      "words_tried": [
+        "aback",
+        "defer",
+        "dirty",
+        "droll",
+        "droop",
+        "dross"
+      ]
+    },
+    {
+      "secret": "graze",
+      "words_tried": [
+        "aback",
+        "dealt",
+        "erase",
+        "frame",
+        "grape",
+        "grave"
+      ]
+    },
+    {
+      "secret": "grout",
+      "words_tried": [
+        "aback",
+        "defer",
+        "girly",
+        "groom",
+        "gross",
+        "group"
+      ]
+    },
+    {
+      "secret": "grown",
+      "words_tried": [
+        "aback",
+        "defer",
+        "girly",
+        "groom",
+        "gross",
+        "group"
+      ]
+    }
+  ]
+}
