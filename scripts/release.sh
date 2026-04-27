@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Full release: bump version, refresh changelog, validate, commit, tag, build Docker, push to Harbor.
+# Full release: bump version, refresh changelog, validate, commit, tag, build Docker, push to Harbor (both amd64 & arm64).
 # Usage: ./scripts/release.sh [patch|minor|major]
 #
 # Harbor credentials must be in env (see push_harbor.sh for details).
 # Will load .env if present.
+# Builds and pushes both amd64 (latest) and arm64 (latest-arm64) images.
 set -euo pipefail
 
 PART="${1:-patch}"
@@ -63,13 +64,17 @@ echo "[6/7] Building Docker image..."
 bash "$SCRIPTS/build_docker.sh"
 echo
 
-# 7. Push to Harbor
-echo "[7/7] Pushing to Harbor..."
+# 7. Push to Harbor (both amd64 and arm64)
+echo "[7/8] Pushing amd64 image to Harbor..."
 bash "$SCRIPTS/push_harbor.sh"
 echo
 
-# Push git commits and tags
-echo "[done] Pushing git..."
+echo "[7.5/8] Pushing arm64 image to Harbor..."
+bash "$SCRIPTS/push_harbor_arm64.sh"
+echo
+
+# 8. Push git commits and tags
+echo "[8/8] Pushing git..."
 git push
 git push --tags
 

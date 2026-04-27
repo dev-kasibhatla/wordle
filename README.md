@@ -238,6 +238,23 @@ bash scripts/release.sh patch
 
 That refreshes `static/changelog.html` from git history before tagging and publishing.
 
+### Multi-Architecture Support
+
+Wordle builds separate Docker images for amd64 and arm64 during release:
+
+- `wordle:0.x.y` – amd64 image (default for most servers)
+- `wordle:0.x.y-arm64` – arm64 image (for ARM hosts like Apple Silicon, Raspberry Pi, Graviton)
+- `wordle:latest` – latest amd64
+- `wordle:latest-arm64` – latest arm64
+
+**On arm64 hosts**, set the image tag before running docker-compose:
+
+```bash
+TAG=latest-arm64 docker-compose up
+```
+
+Or edit `docker-compose.yml` to hardcode `image: wordle:latest-arm64` if you always run on ARM.
+
 ---
 
 ## Docs

@@ -1,6 +1,8 @@
 services:
   wordle:
-    image: wordle:latest
+    # Use specific architecture tag if needed (e.g., latest-arm64 on ARM hosts)
+    # Set TAG=latest-arm64 before docker compose if running on ARM
+    image: wordle:${TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile
