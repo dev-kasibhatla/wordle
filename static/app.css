@@ -544,10 +544,7 @@ header {
 }
 
 .footer-brand {
-  display: grid;
-  gap: 10px;
-  position: relative;
-  z-index: 1;
+  display: none;
 }
 
 .footer-kicker,
@@ -666,6 +663,43 @@ header {
 .page-grid {
   display: grid;
   gap: 16px;
+}
+
+.page-content {
+  display: grid;
+  gap: 24px;
+  max-width: 70ch;
+}
+
+.page-content h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 8px 0 12px 0;
+}
+
+.page-content ul {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+}
+
+.page-content li {
+  color: #d1d6e3;
+  line-height: 1.6;
+}
+
+.page-content a {
+  color: #b6f2cd;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(182, 242, 205, 0.3);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.page-content a:hover {
+  color: #d9ffe9;
+  border-color: rgba(182, 242, 205, 0.6);
 }
 
 .page-card {

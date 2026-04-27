@@ -18,35 +18,30 @@
 
     <section class="page-hero">
       <p class="page-kicker">Privacy</p>
-      <h1 class="page-title">Simple by design.</h1>
-      <p class="page-subtitle">The public deployment is built to keep state short-lived and to avoid collecting more than it needs.</p>
+      <h1 class="page-title">Privacy</h1>
     </section>
 
-    <section class="page-grid">
-      <article class="page-card">
-        <h2>What the service sees</h2>
-        <ul>
-          <li>Requests sent to the API.</li>
-          <li>Basic network metadata needed to protect uptime, including IP-based rate limiting.</li>
-          <li>Operational logs for debugging and abuse detection.</li>
-        </ul>
-      </article>
-      <article class="page-card">
-        <h2>What not to send</h2>
-        <ul>
-          <li>No secrets.</li>
-          <li>No personal data.</li>
-          <li>No production traffic you cannot afford to expose.</li>
-        </ul>
-      </article>
-      <article class="page-card">
-        <h2>How to avoid shared risk</h2>
-        <ul>
-          <li>Run your own copy from the public repository if you need strict control.</li>
-          <li>Review the Docker and deployment scripts before you ship.</li>
-          <li>Treat the public instance as a public instance.</li>
-        </ul>
-      </article>
+    <section class="page-content">
+      <h2>What the service sees</h2>
+      <ul>
+        <li>Requests sent to the API.</li>
+        <li>Basic network metadata needed to protect uptime, including IP-based rate limiting.</li>
+        <li>Operational logs for debugging and abuse detection.</li>
+      </ul>
+
+      <h2>What not to send</h2>
+      <ul>
+        <li>No secrets.</li>
+        <li>No personal data.</li>
+        <li>No production traffic you cannot afford to expose.</li>
+      </ul>
+
+      <h2>How to avoid shared risk</h2>
+      <ul>
+        <li>Run your own copy from the public repository if you need strict control.</li>
+        <li>Review the Docker and deployment scripts before you ship.</li>
+        <li>Treat the public instance as a public instance.</li>
+      </ul>
     </section>
 
     <footer class="site-footer" data-site-footer></footer>

@@ -1,5 +1,5 @@
 const FOOTER_LINKS = [
-  { href: '/terms', label: 'Terms & Conditions' },
+  { href: '/terms', label: 'Terms' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/faqs', label: 'FAQs' },
   { href: '/changelog', label: 'Changelog' },
@@ -12,11 +12,7 @@ function renderFooter(container, versionLabel) {
 
   container.innerHTML = `
     <div class="footer-panel">
-      <div class="footer-brand">
-        <p class="footer-kicker">Public Build</p>
-        <h2 class="footer-title">Wordle, open and ready to inspect.</h2>
-        <p class="footer-copy">Play it. Read it. Fork it. Every public page, release note, and deploy surface is linked from here.</p>
-      </div>
+      <p class="footer-kicker">Public Build</p>
       <div class="footer-links">${links}</div>
       <div class="footer-meta">
         <a class="footer-badge" href="https://github.com/dev-kasibhatla/wordle" target="_blank" rel="noreferrer">
