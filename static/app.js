@@ -83,7 +83,13 @@ class PlayGame {
     this._buildKeyboard();
     this._bindKeys();
 
-    this.menuBtn.addEventListener('click', () => this._toggleMenu());
+    this.menuBtn.addEventListener('click', (e) => {
+      this._toggleMenu();
+      e.stopPropagation();
+    });
+    document.addEventListener('click', () => {
+      this.menuDropdown.classList.remove('visible');
+    });
     document.getElementById('play-menu-dropdown').addEventListener('click', (e) => {
       if (e.target.dataset.action === 'new-game') {
         this.newGame();
