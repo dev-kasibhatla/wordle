@@ -4,6 +4,7 @@ __pycache__/
 build/
 dist/
 wheels/
+dev/
 *.egg-info
 
 # Virtual environments
@@ -13,11 +14,13 @@ wheels/
 .env
 .env.local
 .env.production
+.env.*
 *.env
 
 # IDE
 .vscode/
 .idea/
+*.code-workspace
 
 # OS
 .DS_Store
