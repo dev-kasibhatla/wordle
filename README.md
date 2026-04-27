@@ -71,6 +71,13 @@ uv run wordle-api
 
 FastAPI server at `http://localhost:8000`. Docs at `/docs`.
 
+Static pages:
+
+- `/terms`
+- `/privacy`
+- `/faqs`
+- `/changelog`
+
 **Endpoints**
 
 | Method | Path | Purpose |
@@ -208,6 +215,28 @@ Test layers:
 | `test_hail_mary.py` | Mode-B validation |
 | `test_api.py` | REST endpoints |
 | `test_dataset_consistency.py` | Data integrity |
+
+## Deployment
+
+The public deployment follows the same shape as Mockasi: predeploy checks, Docker build and export, remote upload, container replacement, and postdeploy validation.
+
+```bash
+# local validation + image export
+bash scripts/predeploy_check.sh
+
+# full remote deployment
+bash scripts/deploy_pipeline.sh user@server https://wordle.example.com /opt/wordle 8000
+```
+
+For public hosting, keep hostnames, SSH credentials, registry credentials, and base URLs in GitHub Actions secrets or an untracked `.env.production` on the server. Do not commit deploy values into the repo.
+
+Release flow:
+
+```bash
+bash scripts/release.sh patch
+```
+
+That refreshes `static/changelog.html` from git history before tagging and publishing.
 
 ---
 
