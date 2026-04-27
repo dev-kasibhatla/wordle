@@ -668,6 +668,40 @@ header {
   display: none;
 }
 
+.attribution {
+  text-align: center;
+  padding: 12px 18px 20px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.attribution a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(107, 107, 128, 0.3);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.attribution a:hover {
+  color: var(--accent);
+  border-color: rgba(76, 175, 130, 0.6);
+}
+
+@media (max-width: 420px) {
+  .attribution {
+    padding: 10px 14px 16px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  .attribution {
+    padding: 8px 12px 14px;
+    font-size: 10px;
+  }
+}
+
 .footer-kicker,
 .page-kicker {
   font-size: 11px;
