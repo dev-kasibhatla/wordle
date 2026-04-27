@@ -2,59 +2,54 @@
 
 from __future__ import annotations
 
-from csv import DictReader
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 import random
 
-from wordle.constants import DEFAULT_DATASET_PATH, DEFAULT_GUESS_PATH
+from wordle.constants import DEFAULT_WORDS_PATH
 
 
 @dataclass(frozen=True)
 class WordleData:
+    """Single-source word list used for both guess validation and secret selection."""
+
+    # Sorted tuple for deterministic ordering and random.choice compatibility.
     guess_words: tuple[str, ...]
+    # Same data — every word is a valid secret and a valid guess.
     official_answers: tuple[str, ...]
+    # Frozenset for O(1) membership checks; computed once from guess_words.
+    _word_set: frozenset[str] = field(default_factory=frozenset, init=False, compare=False, hash=False)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "_word_set", frozenset(self.guess_words))
 
     @property
-    def guess_word_set(self) -> set[str]:
-        return set(self.guess_words)
+    def guess_word_set(self) -> frozenset[str]:
+        return self._word_set
 
 
-def load_guess_words(path: Path = DEFAULT_GUESS_PATH) -> tuple[str, ...]:
-    words = []
-    with path.open("r", encoding="utf-8") as file:
-        for line in file:
-            word = line.strip().lower()
-            if len(word) == 5 and word.isalpha():
-                words.append(word)
-    return tuple(dict.fromkeys(words))
+def load_words(path: Path = DEFAULT_WORDS_PATH) -> tuple[str, ...]:
+    """Load and deduplicate 5-letter words from a plain word-per-line file."""
+    seen: set[str] = set()
+    words: list[str] = []
+    with path.open("r", encoding="utf-8", buffering=1 << 20) as fh:
+        for line in fh:
+            w = line.strip().lower()
+            if len(w) == 5 and w.isalpha() and w not in seen:
+                seen.add(w)
+                words.append(w)
+    return tuple(words)
 
 
-def load_official_answers(path: Path = DEFAULT_DATASET_PATH) -> tuple[str, ...]:
-    answers = []
-    with path.open("r", encoding="utf-8") as file:
-        reader = DictReader(file)
-        for row in reader:
-            word = (row.get("word") or "").strip().lower()
-            day = (row.get("day") or "").strip()
-            if day and len(word) == 5 and word.isalpha():
-                answers.append(word)
-    return tuple(dict.fromkeys(answers))
-
-
-def load_wordle_data(
-    guess_path: Path = DEFAULT_GUESS_PATH,
-    dataset_path: Path = DEFAULT_DATASET_PATH,
-) -> WordleData:
-    return WordleData(
-        guess_words=load_guess_words(guess_path),
-        official_answers=load_official_answers(dataset_path),
-    )
+def load_wordle_data(path: Path = DEFAULT_WORDS_PATH) -> WordleData:
+    """Load WordleData from the single canonical word list."""
+    words = load_words(path)
+    return WordleData(guess_words=words, official_answers=words)
 
 
 def find_missing_answers(data: WordleData) -> list[str]:
-    guess_set = data.guess_word_set
-    return sorted(word for word in data.official_answers if word not in guess_set)
+    """Return any official answers absent from the guess dictionary."""
+    return sorted(w for w in data.official_answers if w not in data.guess_word_set)
 
 
 def choose_random_answer(data: WordleData, rng: random.Random | None = None) -> str:
