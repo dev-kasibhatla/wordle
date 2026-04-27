@@ -5,8 +5,7 @@ const API = '/api';
 const ROWS = 6, COLS = 5;
 const KEYBOARD_ROWS = [
   ['q','w','e','r','t','y','u','i','o','p'],
-  ['a','s','d','f','g','h','j','k','l'],
-  ['Enter','z','x','c','v','b','n','m','Backspace'],
+  ['a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m'],
 ];
 const SCORE_COLOR = { 2: 'green', 1: 'yellow', 0: 'grey' };
 const FLIP_DELAY = 300; // ms per tile
@@ -74,14 +73,20 @@ class PlayGame {
     this.board = document.getElementById('play-board');
     this.toast = document.getElementById('play-toast');
     this.kbEl  = document.getElementById('play-keyboard');
-    this.newBtn = document.getElementById('play-new');
+    this.enterBtn = document.getElementById('play-enter');
+    this.menuBtn = document.getElementById('play-menu');
+    this.menuDropdown = document.getElementById('play-menu-dropdown');
     this.shareBtn = document.getElementById('play-share');
 
     this._buildBoard();
     this._buildKeyboard();
     this._bindKeys();
 
-    this.newBtn.addEventListener('click', () => this.newGame());
+    document.getElementById('play-menu-dropdown').addEventListener('click', (e) => {
+      if (e.target.dataset.action === 'new-game') {
+        this.newGame();
+      }
+    });
     this.shareBtn.addEventListener('click', () => this._share());
     this.newGame();
   }
@@ -144,7 +149,10 @@ class PlayGame {
       // Don't capture if user is focused on an input/textarea
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       const key = e.key;
-      if (key === 'Enter' || key === 'Backspace') {
+      if (key === 'Enter') {
+        e.preventDefault();
+        this._submitGuess();
+      } else if (key === 'Backspace') {
         e.preventDefault();
         this._handleKey(key);
       } else if (/^[a-zA-Z]$/.test(key)) {
@@ -166,8 +174,6 @@ class PlayGame {
         tile.textContent = '';
         tile.classList.remove('filled');
       }
-    } else if (key === 'Enter') {
-      this._submitGuess();
     } else if (this.currentCol < COLS && /^[a-z]$/.test(key)) {
       const tile = this.tiles[this.currentRow][this.currentCol];
       tile.textContent = key.toUpperCase();
@@ -181,9 +187,13 @@ class PlayGame {
     }
   }
 
+  _toggleMenu() {
+    this.menuDropdown.classList.toggle('visible');
+  }
+
   async newGame() {
     this._busy = true;
-    this.newBtn.disabled = true;
+    this.enterBtn.disabled = true;
     try {
       const data = await apiFetch('/games', { method: 'POST' });
       this.gameId = data.game_id;
@@ -195,12 +205,13 @@ class PlayGame {
       this._buildBoard();
       this._buildKeyboard();
       this.shareBtn.style.display = 'none';
+      this.menuDropdown.classList.remove('visible');
       showToast(this.toast, 'New game started', 'success', 1500);
     } catch (e) {
       showToast(this.toast, e.message, 'error');
     } finally {
       this._busy = false;
-      this.newBtn.disabled = false;
+      this.enterBtn.disabled = false;
     }
   }
 

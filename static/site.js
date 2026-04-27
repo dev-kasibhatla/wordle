@@ -8,18 +8,15 @@ const FOOTER_LINKS = [
 function renderFooter(container, versionLabel) {
   const links = FOOTER_LINKS.map(
     item => `<a class="footer-link" href="${item.href}">${item.label}</a>`
-  ).join('');
+  ).join(' ');
 
   container.innerHTML = `
     <div class="footer-panel">
-      <p class="footer-kicker">Public Build</p>
-      <div class="footer-links">${links}</div>
-      <div class="footer-meta">
-        <a class="footer-badge" href="https://github.com/dev-kasibhatla/wordle" target="_blank" rel="noreferrer">
-          <img src="https://img.shields.io/badge/GitHub-Open%20Source-111827?logo=github&logoColor=white" alt="Open source on GitHub" />
-        </a>
-        <span class="version-badge">${versionLabel}</span>
-      </div>
+      <div class="footer-links-group">${links}</div>
+      <a class="footer-badge" href="https://github.com/dev-kasibhatla/wordle" target="_blank" rel="noreferrer">
+        <img src="https://img.shields.io/badge/GitHub-Open%20Source-111827?logo=github&logoColor=white" alt="Open source on GitHub" />
+      </a>
+      <span class="version-badge">${versionLabel}</span>
     </div>
   `;
 }
