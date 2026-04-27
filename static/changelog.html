@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wordle Changelog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/app.css" />
+</head>
+<body>
+  <main class="page-shell">
+    <header class="page-header">
+      <div class="logo">WORDLE</div>
+      <a class="back-link" href="/">Back to app</a>
+    </header>
+
+    <section class="page-hero">
+      <p class="page-kicker">Release Notes</p>
+      <h1 class="page-title">Changelog</h1>
+      <p class="page-subtitle">Generated from git history for each release and deploy.</p>
+    </section>
+    <section class="page-grid">
+      <article class="page-card">
+        <h2>v0.1.0</h2>
+        <p class="page-copy">29 commits shipped in this slice.</p>
+      </article>
+    </section>
+    <section class="timeline-list">
+      <article class="timeline-item">
+        <p class="timeline-meta">019e983</p>
+        <h2 class="timeline-title">Scaffold project docs and uv config</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">062cac6</p>
+        <h2 class="timeline-title">Add Wordle engine and dataset consistency guard</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">6b37395</p>
+        <h2 class="timeline-title">Implement single-endpoint FastAPI play API</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">c92fc9e</p>
+        <h2 class="timeline-title">Add investigate and hail-mary solver engine</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">feb4d41</p>
+        <h2 class="timeline-title">Add asyncio batch evaluator and performance reports</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">d799f7a</p>
+        <h2 class="timeline-title">feat: add matplotlib and markdown+graph report infra</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">dc0f051</p>
+        <h2 class="timeline-title">feat: support mode B and per-mode report dirs in CLI and batch</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">6a0fcdd</p>
+        <h2 class="timeline-title">test: add hail-mary batch suite and report file checks</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">39aa86a</p>
+        <h2 class="timeline-title">docs: concise README, MIT license, contributing guide</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">82f33d6</p>
+        <h2 class="timeline-title">results: add mode-a and mode-b batch results and reports</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">b1d1506</p>
+        <h2 class="timeline-title">chore: clean up on aisle 5</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">c5d6702</p>
+        <h2 class="timeline-title">chore: docs</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">3ffcb44</p>
+        <h2 class="timeline-title">feat(api): explicit /api routes, rate limiting, static serving</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">9dd76fe</p>
+        <h2 class="timeline-title">feat(service): add get_game, run_solver, analyze_state helpers</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">437d8be</p>
+        <h2 class="timeline-title">feat(ui): add static web UI with Play, Auto Solve, and Puzzle State tabs</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">99f449c</p>
+        <h2 class="timeline-title">test(api): add /api route, solver, rate limit, and game flow tests</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">01781ee</p>
+        <h2 class="timeline-title">feat: version endpoint and badge in webui header</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">d39a296</p>
+        <h2 class="timeline-title">refactor: allow WORDLE_ROOT env override for data path</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">834940c</p>
+        <h2 class="timeline-title">build: multi-stage Dockerfile for minimal production image</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">bb34387</p>
+        <h2 class="timeline-title">build: add version bump, docker build, harbor push, and release scripts</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">f34a493</p>
+        <h2 class="timeline-title">ci: publish to harbor on version tags via github secrets</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">8d39499</p>
+        <h2 class="timeline-title">build: add docker-compose, env example, and update gitignore</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">8c7892a</p>
+        <h2 class="timeline-title">fix: resolve static and data dirs via WORDLE_ROOT in docker</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">b4a98c6</p>
+        <h2 class="timeline-title">test: comprehensive game state tests for all lifecycle states</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">fa2a6b8</p>
+        <h2 class="timeline-title">fix: lock input during animations, fix keyboard scoping, add bounce/toast polish</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">beec818</p>
+        <h2 class="timeline-title">fix: permanently apply tile colors after flip via JS classes</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">8c2068f</p>
+        <h2 class="timeline-title">ui: improve keyboard key colors with borders for better visibility</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">0bc32fc</p>
+        <h2 class="timeline-title">fix: keyboard keys now color correctly after guesses</h2>
+      </article>
+      <article class="timeline-item">
+        <p class="timeline-meta">6cacb7e</p>
+        <h2 class="timeline-title">chore: add words</h2>
+      </article>
+    </section>
+    <footer class="site-footer" data-site-footer></footer>
+  </main>
+
+  <script type="module" src="/assets/site.js"></script>
+</body>
+</html>

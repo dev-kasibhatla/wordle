@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wordle FAQs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/app.css" />
+</head>
+<body>
+  <main class="page-shell">
+    <header class="page-header">
+      <div class="logo">WORDLE</div>
+      <a class="back-link" href="/">Back to app</a>
+    </header>
+
+    <section class="page-hero">
+      <p class="page-kicker">FAQs</p>
+      <h1 class="page-title">A few clear answers.</h1>
+      <p class="page-subtitle">Short, plain, and useful.</p>
+    </section>
+
+    <section class="faq-list">
+      <article class="faq-item">
+        <h2 class="faq-question">What is this?</h2>
+        <p class="faq-answer">A public Wordle engine, solver, and API. You can play it, inspect it, and run your own copy.</p>
+      </article>
+      <article class="faq-item">
+        <h2 class="faq-question">Is the source open?</h2>
+        <p class="faq-answer">Yes. The full project lives on GitHub, and the footer links straight to it.</p>
+      </article>
+      <article class="faq-item">
+        <h2 class="faq-question">Can I rely on the public API?</h2>
+        <p class="faq-answer">For demos and experiments, yes. For anything critical, ship your own deployment.</p>
+      </article>
+      <article class="faq-item">
+        <h2 class="faq-question">Why the limits?</h2>
+        <p class="faq-answer">Speed matters. Shared systems stay fast when one client cannot take the whole room.</p>
+      </article>
+      <article class="faq-item">
+        <h2 class="faq-question">What should I never send?</h2>
+        <p class="faq-answer">Secrets, private data, or anything you would not post in public.</p>
+      </article>
+    </section>
+
+    <footer class="site-footer" data-site-footer></footer>
+  </main>
+
+  <script type="module" src="/assets/site.js"></script>
+</body>
+</html>
