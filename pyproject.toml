@@ -1,6 +1,6 @@
 [project]
 name = "wordle"
-version = "0.1.15"
+version = "0.1.16"
 description = "Modular Wordle engine, API, solver, and batch evaluator"
 readme = "README.md"
 requires-python = ">=3.12"
