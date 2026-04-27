@@ -37,8 +37,7 @@ src/wordle/
     metrics.py       statistics
     report.py        markdown and graphs
 data/
-  5-letter-words.txt guess dictionary
-  wordle-test-dataset.csv official answers
+  words.txt          single 5-letter word list (guesses + secrets)
 reports/
   mode-a/  investigation + hail-mary results
   mode-b/  hail-mary only results
@@ -184,11 +183,9 @@ Each batch run writes to its report directory:
 
 ## Data
 
-`data/5-letter-words.txt`: 12 972 valid five-letter words.
+`data/words.txt`: 18 783 unique 5-letter words — single source of truth for both guess validation and secret selection.
 
-`data/wordle-test-dataset.csv`: 2 315 official Wordle answers.
-
-All answers exist in the guess dictionary (verified by `wordle-check-dataset`).
+All words are valid guesses and eligible secrets (verified by `wordle-check-dataset`).
 
 ---
 

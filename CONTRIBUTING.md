@@ -46,7 +46,7 @@ uv run wordle-batch --mode b
 
 ## Data changes
 
-Do not add words to `data/5-letter-words.txt` or `data/wordle-test-dataset.csv` without a clear, verifiable source. Run `uv run wordle-check-dataset` to verify consistency.
+Do not add words to `data/words.txt` without a clear, verifiable source. Run `uv run wordle-check-dataset` to verify consistency.
 
 ## Pull requests
 
