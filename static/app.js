@@ -210,7 +210,7 @@ class PlayGame {
       this.menuDropdown.classList.remove('visible');
       showToast(this.toast, 'New game started', 'success', 1500);
     } catch (e) {
-      showToast(this.toast, e.message, 'error');
+      showToast(this.toast, e.message, 'error', 3000);
     } finally {
       this._busy = false;
       this.enterBtn.disabled = false;
@@ -255,7 +255,7 @@ class PlayGame {
       this._highlightActiveRow();
     } catch (e) {
       this._shakeRow(this.currentRow);
-      showToast(this.toast, e.message, 'error');
+      showToast(this.toast, e.message, 'error', 3000);
     } finally {
       this._clearLoadingState();
       this._busy = false;
@@ -379,7 +379,7 @@ class AutoSolve {
   async run() {
     const secret = this.secretInput.value.trim().toLowerCase();
     if (!secret || secret.length !== 5 || !/^[a-z]+$/.test(secret)) {
-      showToast(this.toast, 'Enter a valid 5-letter word', 'error');
+      showToast(this.toast, 'Enter a valid 5-letter word', 'error', 3000);
       return;
     }
     this.runBtn.disabled = true;
@@ -393,9 +393,7 @@ class AutoSolve {
       this.resultDiv.style.display = '';
       await this._renderResult(data);
     } catch (e) {
-      showToast(this.toast, e.message, 'error');
-    } finally {
-      this.runBtn.disabled = false;
+      showToast(this.toast, e.message, 'error', 3000);
     }
   }
 
@@ -557,7 +555,7 @@ class PuzzleAnalyzer {
       const guess = row.input.value.trim().toLowerCase();
       if (!guess) continue;
       if (guess.length !== 5) {
-        showToast(this.toast, `Guess "${guess}" is not 5 letters`, 'error');
+        showToast(this.toast, `Guess "${guess}" is not 5 letters`, 'error', 3000);
         return;
       }
       const score = row.tiles.map(t => parseInt(t.dataset.score));
@@ -565,13 +563,13 @@ class PuzzleAnalyzer {
     }
 
     if (history.length === 0) {
-      showToast(this.toast, 'Enter at least one guess', 'error');
+      showToast(this.toast, 'Enter at least one guess', 'error', 3000);
       return;
     }
 
     const secret = this.secretEl.value.trim().toLowerCase() || null;
     if (secret && (secret.length !== 5 || !/^[a-z]+$/.test(secret))) {
-      showToast(this.toast, 'Secret must be a 5-letter word or left blank', 'error');
+      showToast(this.toast, 'Secret must be a 5-letter word or left blank', 'error', 3000);
       return;
     }
 
@@ -586,7 +584,7 @@ class PuzzleAnalyzer {
       this.resultEl.style.display = '';
       this._renderAnalysis(data, history, secret);
     } catch (e) {
-      showToast(this.toast, e.message, 'error');
+      showToast(this.toast, e.message, 'error', 3000);
     } finally {
       this.analyzeBtn.disabled = false;
     }
