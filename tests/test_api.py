@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 
 import pytest
 
-from wordle.api.app import create_app, _GAME_LIMITER, _SOLVER_LIMITER
+from wordle.api.app import RuntimeSettings, create_app, _GAME_LIMITER, _SOLVER_LIMITER
 from wordle.data import WordleData
 
 
@@ -13,19 +13,19 @@ TEST_ANSWERS = ("cigar", "awake", "serve")
 @pytest.fixture(autouse=True)
 def _reset_limiters():
     """Reset in-memory rate limiter state between tests to prevent leakage."""
-    _GAME_LIMITER._ip.clear()
-    _GAME_LIMITER._all.clear()
-    _SOLVER_LIMITER._ip.clear()
-    _SOLVER_LIMITER._all.clear()
+    _GAME_LIMITER.reset()
+    _SOLVER_LIMITER.reset()
     yield
-    _GAME_LIMITER._ip.clear()
-    _GAME_LIMITER._all.clear()
-    _SOLVER_LIMITER._ip.clear()
-    _SOLVER_LIMITER._all.clear()
+    _GAME_LIMITER.reset()
+    _SOLVER_LIMITER.reset()
 
 
-def _client(seed: int = 0) -> TestClient:
-    app = create_app(data=WordleData(guess_words=TEST_GUESSES, official_answers=TEST_ANSWERS), seed=seed)
+def _client(seed: int = 0, runtime_settings: RuntimeSettings | None = None) -> TestClient:
+    app = create_app(
+        data=WordleData(guess_words=TEST_GUESSES, official_answers=TEST_ANSWERS),
+        seed=seed,
+        runtime_settings=runtime_settings,
+    )
     return TestClient(app)
 
 
@@ -189,15 +189,35 @@ def test_solver_analyze_no_history():
     assert data["candidates_remaining"] == len(TEST_ANSWERS)
 
 
+def test_health_endpoint_returns_ok():
+    client = _client()
+    res = client.get("/health")
+    assert res.status_code == 200
+    assert res.json() == {"status": "ok"}
+
+
+def test_public_pages_include_security_headers():
+    client = _client()
+    res = client.get("/")
+    assert res.headers["x-content-type-options"] == "nosniff"
+    assert res.headers["x-frame-options"] == "DENY"
+    assert res.headers["referrer-policy"] == "strict-origin-when-cross-origin"
+
+
+@pytest.mark.parametrize("path", ["/", "/terms", "/privacy", "/faqs", "/changelog"])
+def test_public_pages_are_served(path: str):
+    client = _client()
+    res = client.get(path)
+    assert res.status_code == 200
+    assert "text/html" in res.headers["content-type"]
+
+
 # ── rate limiting ─────────────────────────────────────────────────────────────
 
 def test_rate_limit_per_ip_triggers():
-    from wordle.api.app import _GAME_LIMITER
-    # patch the per_ip limit to 1 for this test
     original = _GAME_LIMITER._per_ip
     _GAME_LIMITER._per_ip = 1
-    _GAME_LIMITER._ip.clear()
-    _GAME_LIMITER._all.clear()
+    _GAME_LIMITER.reset()
     try:
         client = _client()
         r1 = client.post("/api/games")
@@ -208,20 +228,42 @@ def test_rate_limit_per_ip_triggers():
         assert err["detail"]["code"] == "rate_limit_ip"
     finally:
         _GAME_LIMITER._per_ip = original
-        _GAME_LIMITER._ip.clear()
-        _GAME_LIMITER._all.clear()
+        _GAME_LIMITER.reset()
+
+
+def test_untrusted_forwarded_header_does_not_bypass_per_ip_limit():
+    original_per_ip = _GAME_LIMITER._per_ip
+    original_global = _GAME_LIMITER._global
+    _GAME_LIMITER._per_ip = 1
+    _GAME_LIMITER._global = 1000
+    _GAME_LIMITER.reset()
+    try:
+        client = _client()
+        r1 = client.post("/api/games", headers={"x-forwarded-for": "1.1.1.1"})
+        r2 = client.post("/api/games", headers={"x-forwarded-for": "2.2.2.2"})
+        assert r1.status_code == 201
+        assert r2.status_code == 429
+        err = r2.json()
+        assert err["detail"]["code"] == "rate_limit_ip"
+    finally:
+        _GAME_LIMITER._per_ip = original_per_ip
+        _GAME_LIMITER._global = original_global
+        _GAME_LIMITER.reset()
 
 
 def test_rate_limit_global_triggers():
-    from wordle.api.app import _GAME_LIMITER
     original = _GAME_LIMITER._global
+    original_per_ip = _GAME_LIMITER._per_ip
     _GAME_LIMITER._global = 1
     _GAME_LIMITER._per_ip = 1000
-    _GAME_LIMITER._ip.clear()
-    _GAME_LIMITER._all.clear()
+    _GAME_LIMITER.reset()
     try:
-        client = _client()
-        # Use two different mock IPs by patching the client host
+        client = _client(
+            runtime_settings=RuntimeSettings(
+                trust_proxy_headers=True,
+                trusted_proxy_hosts=frozenset({"testclient"}),
+            )
+        )
         r1 = client.post("/api/games", headers={"x-forwarded-for": "1.1.1.1"})
         r2 = client.post("/api/games", headers={"x-forwarded-for": "2.2.2.2"})
         assert r1.status_code == 201
@@ -230,7 +272,17 @@ def test_rate_limit_global_triggers():
         assert err["detail"]["code"] == "rate_limit_global"
     finally:
         _GAME_LIMITER._global = original
-        _GAME_LIMITER._per_ip = 30
-        _GAME_LIMITER._ip.clear()
-        _GAME_LIMITER._all.clear()
+        _GAME_LIMITER._per_ip = original_per_ip
+        _GAME_LIMITER.reset()
+
+
+def test_large_api_request_is_rejected():
+    client = _client(runtime_settings=RuntimeSettings(max_api_body_bytes=32))
+    res = client.post(
+        "/api/solver/run",
+        content='{"secret":"cigar","mode":"a","padding":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}',
+        headers={"content-type": "application/json"},
+    )
+    assert res.status_code == 413
+    assert res.json()["detail"]["code"] == "payload_too_large"
 

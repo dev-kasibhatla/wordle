@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import os
 import time
 from collections import defaultdict
+from dataclasses import dataclass
 from importlib.metadata import version as _pkg_version
 from pathlib import Path
 
@@ -38,18 +40,69 @@ from wordle.solver.strategy import SolverConfig
 
 # ── rate limiting (in-memory, single-process) ─────────────────────────────────
 
-_WINDOW = 60  # seconds
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        value = int(raw)
+    except ValueError:
+        return default
+    return value if value > 0 else default
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_csv(name: str) -> frozenset[str]:
+    raw = os.environ.get(name, "")
+    values = {item.strip() for item in raw.split(",") if item.strip()}
+    return frozenset(values)
+
+
+@dataclass(frozen=True)
+class RuntimeSettings:
+    rate_limit_window_seconds: int = 60
+    game_requests_per_ip: int = 30
+    game_requests_global: int = 300
+    solver_requests_per_ip: int = 10
+    solver_requests_global: int = 60
+    max_api_body_bytes: int = 4096
+    trust_proxy_headers: bool = False
+    trusted_proxy_hosts: frozenset[str] = frozenset()
+
+
+def _load_runtime_settings() -> RuntimeSettings:
+    return RuntimeSettings(
+        rate_limit_window_seconds=_env_int("WORDLE_RATE_LIMIT_WINDOW_SECONDS", 60),
+        game_requests_per_ip=_env_int("WORDLE_RATE_LIMIT_GAME_PER_IP", 30),
+        game_requests_global=_env_int("WORDLE_RATE_LIMIT_GAME_GLOBAL", 300),
+        solver_requests_per_ip=_env_int("WORDLE_RATE_LIMIT_SOLVER_PER_IP", 10),
+        solver_requests_global=_env_int("WORDLE_RATE_LIMIT_SOLVER_GLOBAL", 60),
+        max_api_body_bytes=_env_int("WORDLE_MAX_API_BODY_BYTES", 4096),
+        trust_proxy_headers=_env_flag("WORDLE_TRUST_PROXY_HEADERS", False),
+        trusted_proxy_hosts=_env_csv("WORDLE_TRUSTED_PROXY_HOSTS"),
+    )
+
+
+_RUNTIME_SETTINGS = _load_runtime_settings()
 
 class _Limiter:
-    def __init__(self, per_ip: int, global_: int) -> None:
+    def __init__(self, per_ip: int, global_: int, window_seconds: int) -> None:
         self._per_ip = per_ip
         self._global = global_
+        self._window_seconds = window_seconds
         self._ip: dict[str, list[float]] = defaultdict(list)
         self._all: list[float] = []
 
     def check(self, ip: str) -> None:
         now = time.monotonic()
-        cutoff = now - _WINDOW
+        cutoff = now - self._window_seconds
         self._all = [t for t in self._all if t > cutoff]
         self._ip[ip] = [t for t in self._ip[ip] if t > cutoff]
         if len(self._all) >= self._global:
@@ -59,14 +112,31 @@ class _Limiter:
         self._all.append(now)
         self._ip[ip].append(now)
 
+    def reset(self) -> None:
+        self._ip.clear()
+        self._all.clear()
 
-_GAME_LIMITER = _Limiter(per_ip=30, global_=300)    # play requests
-_SOLVER_LIMITER = _Limiter(per_ip=10, global_=60)   # solver requests (heavier)
+
+_GAME_LIMITER = _Limiter(
+    per_ip=_RUNTIME_SETTINGS.game_requests_per_ip,
+    global_=_RUNTIME_SETTINGS.game_requests_global,
+    window_seconds=_RUNTIME_SETTINGS.rate_limit_window_seconds,
+)  # play requests
+_SOLVER_LIMITER = _Limiter(
+    per_ip=_RUNTIME_SETTINGS.solver_requests_per_ip,
+    global_=_RUNTIME_SETTINGS.solver_requests_global,
+    window_seconds=_RUNTIME_SETTINGS.rate_limit_window_seconds,
+)  # solver requests (heavier)
 
 
-def _client_ip(request: Request) -> str:
+def _client_ip(request: Request, settings: RuntimeSettings) -> str:
+    direct_ip = request.client.host if request.client else "unknown"
+    if not settings.trust_proxy_headers:
+        return direct_ip
+    if direct_ip not in settings.trusted_proxy_hosts:
+        return direct_ip
     forwarded = request.headers.get("x-forwarded-for")
-    return forwarded.split(",")[0].strip() if forwarded else (request.client.host if request.client else "unknown")
+    return forwarded.split(",")[0].strip() if forwarded else direct_ip
 
 
 # ── helper converters ─────────────────────────────────────────────────────────
@@ -119,6 +189,14 @@ def _solver_result_to_response(secret: str, mode: str, result: SolverResult) -> 
     )
 
 
+_STATIC_PAGES = {
+    "terms": "terms.html",
+    "privacy": "privacy.html",
+    "faqs": "faqs.html",
+    "changelog": "changelog.html",
+}
+
+
 # ── API router ────────────────────────────────────────────────────────────────
 
 def _make_router(app: FastAPI) -> APIRouter:
@@ -134,7 +212,7 @@ def _make_router(app: FastAPI) -> APIRouter:
 
     @router.post("/games", response_model=GameStateResponse, status_code=201)
     def create_game(request: Request) -> GameStateResponse:
-        _GAME_LIMITER.check(_client_ip(request))
+        _GAME_LIMITER.check(_client_ip(request, app.state.runtime_settings))
         manager: GameManager = app.state.manager
         result = manager.new_game()
         return GameStateResponse(
@@ -147,7 +225,7 @@ def _make_router(app: FastAPI) -> APIRouter:
 
     @router.get("/games/{game_id}", response_model=GameStateResponse)
     def get_game(game_id: str, request: Request) -> GameStateResponse:
-        _GAME_LIMITER.check(_client_ip(request))
+        _GAME_LIMITER.check(_client_ip(request, app.state.runtime_settings))
         manager: GameManager = app.state.manager
         try:
             state = manager.get_game(game_id)
@@ -165,7 +243,7 @@ def _make_router(app: FastAPI) -> APIRouter:
 
     @router.post("/games/{game_id}/guesses", response_model=GuessResponse)
     def submit_guess(game_id: str, body: GuessRequest, request: Request) -> GuessResponse:
-        _GAME_LIMITER.check(_client_ip(request))
+        _GAME_LIMITER.check(_client_ip(request, app.state.runtime_settings))
         manager: GameManager = app.state.manager
         try:
             result = manager.play_guess(game_id, body.guess)
@@ -187,7 +265,7 @@ def _make_router(app: FastAPI) -> APIRouter:
 
     @router.post("/solver/run", response_model=SolverRunResponse)
     def solver_run(body: SolverRunRequest, request: Request) -> SolverRunResponse:
-        _SOLVER_LIMITER.check(_client_ip(request))
+        _SOLVER_LIMITER.check(_client_ip(request, app.state.runtime_settings))
         manager: GameManager = app.state.manager
         config = SolverConfig(mode=body.mode)
         try:
@@ -198,7 +276,7 @@ def _make_router(app: FastAPI) -> APIRouter:
 
     @router.post("/solver/analyze", response_model=SolverAnalyzeResponse)
     def solver_analyze(body: SolverAnalyzeRequest, request: Request) -> SolverAnalyzeResponse:
-        _SOLVER_LIMITER.check(_client_ip(request))
+        _SOLVER_LIMITER.check(_client_ip(request, app.state.runtime_settings))
         manager: GameManager = app.state.manager
         config = SolverConfig(mode=body.mode)
         history = [(item.guess.lower().strip(), item.score) for item in body.history]
@@ -224,12 +302,39 @@ def _make_router(app: FastAPI) -> APIRouter:
 
 # ── app factory ───────────────────────────────────────────────────────────────
 
-def create_app(data: WordleData | None = None, seed: int | None = None) -> FastAPI:
+def create_app(
+    data: WordleData | None = None,
+    seed: int | None = None,
+    runtime_settings: RuntimeSettings | None = None,
+) -> FastAPI:
     app = FastAPI(title="Wordle", version=APP_VERSION, docs_url="/api/docs", redoc_url=None)
     app.state.manager = GameManager(data or load_wordle_data(), seed=seed)
+    app.state.runtime_settings = runtime_settings or _RUNTIME_SETTINGS
+
+    @app.middleware("http")
+    async def harden_public_app(request: Request, call_next):
+        max_body = app.state.runtime_settings.max_api_body_bytes
+        if request.url.path.startswith("/api") and request.method in {"POST", "PUT", "PATCH"}:
+            content_length = request.headers.get("content-length")
+            if content_length and int(content_length) > max_body:
+                return JSONResponse(
+                    status_code=413,
+                    content={"detail": {"code": "payload_too_large", "message": "Request body is too large."}},
+                )
+
+        response = await call_next(request)
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+        return response
 
     # mount API router
     app.include_router(_make_router(app))
+
+    @app.get("/health", include_in_schema=False)
+    def health() -> dict[str, str]:
+        return {"status": "ok"}
 
     # legacy shim preserved for old tests
     @app.post("/wordle/play", response_model=PlayResponse, include_in_schema=False)
@@ -247,7 +352,6 @@ def create_app(data: WordleData | None = None, seed: int | None = None) -> FastA
             return PlayResponse(status="error", error=ErrorPayload(code=error.code, message=error.message))
 
     # static UI — prefer WORDLE_ROOT env var (set in Docker), fall back to repo layout
-    import os
     _root = os.environ.get("WORDLE_ROOT")
     static_dir = Path(_root) / "static" if _root else Path(__file__).resolve().parents[3] / "static"
     if static_dir.exists():
@@ -256,5 +360,11 @@ def create_app(data: WordleData | None = None, seed: int | None = None) -> FastA
         @app.get("/", include_in_schema=False)
         def index() -> FileResponse:
             return FileResponse(str(static_dir / "index.html"))
+
+        for slug, filename in _STATIC_PAGES.items():
+
+            @app.get(f"/{slug}", include_in_schema=False)
+            def static_page(filename: str = filename) -> FileResponse:
+                return FileResponse(str(static_dir / filename))
 
     return app
