@@ -39,7 +39,7 @@ class GameState:
 class WordleGameEngine:
     """Stateful helper for applying validated guesses."""
 
-    def __init__(self, guess_words: set[str]) -> None:
+    def __init__(self, guess_words: frozenset[str]) -> None:
         self.guess_words = guess_words
 
     def validate_guess(self, guess: str) -> str:

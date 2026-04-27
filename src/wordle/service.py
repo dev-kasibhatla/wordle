@@ -47,7 +47,7 @@ class GameManager:
 
     def __init__(self, data: WordleData, seed: int | None = None) -> None:
         self.data = data
-        self.engine = WordleGameEngine(set(data.guess_words))
+        self.engine = WordleGameEngine(data.guess_word_set)
         self._games: dict[str, GameState] = {}
         self._rng = random.Random(seed)
 
