@@ -5,7 +5,8 @@ const API = '/api';
 const ROWS = 6, COLS = 5;
 const KEYBOARD_ROWS = [
   ['q','w','e','r','t','y','u','i','o','p'],
-  ['a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m'],
+  ['a','s','d','f','g','h','j','k','l'],
+  ['Backspace','z','x','c','v','b','n','m'],
 ];
 const SCORE_COLOR = { 2: 'green', 1: 'yellow', 0: 'grey' };
 const FLIP_DELAY = 300; // ms per tile
@@ -82,6 +83,7 @@ class PlayGame {
     this._buildKeyboard();
     this._bindKeys();
 
+    this.menuBtn.addEventListener('click', () => this._toggleMenu());
     document.getElementById('play-menu-dropdown').addEventListener('click', (e) => {
       if (e.target.dataset.action === 'new-game') {
         this.newGame();
