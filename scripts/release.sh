@@ -12,7 +12,9 @@ SCRIPTS="$(dirname "$0")"
 # Load .env if present (never committed)
 if [[ -f ".env" ]]; then
   set +u
+  set -a
   source .env
+  set +a
   set -u
 fi
 
