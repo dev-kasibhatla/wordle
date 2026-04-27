@@ -1,6 +1,6 @@
 # Wordle Solver Report Mode B (Hail-Mary Only)
 
-Tested on 2315 official Wordle answers.
+Tested on 18783 official Wordle answers.
 
 ---
 
@@ -8,13 +8,13 @@ Tested on 2315 official Wordle answers.
 
 | Metric | Value |
 |---|---|
-| Total puzzles | 2315 |
-| Solved | 2257 |
-| Failed | 58 |
-| Solve rate | 97.5% |
-| Average turns (solved) | 4.27 |
-| Median turns (solved) | 4.0 |
-| 90th percentile turns | 5.0 |
+| Total puzzles | 18783 |
+| Solved | 13620 |
+| Failed | 5163 |
+| Solve rate | 72.5% |
+| Average turns (solved) | 4.86 |
+| Median turns (solved) | 5.0 |
+| 90th percentile turns | 6.0 |
 
 ## Solve Rate
 
@@ -28,18 +28,18 @@ Mode B commits immediately. Every guess is the best candidate. No discovery, no 
 
 Each bar shows how many puzzles were solved in that many turns. Anything beyond turn 6 is a failure.
 
-## Failures (58 puzzles)
+## Failures (5163 puzzles)
 
 | Secret | Guesses tried |
 |---|---|
-| `bunny` | aback → beefy → biddy → bobby → buggy → bully |
-| `burly` | aback → beefy → biddy → bobby → buggy → bully |
-| `bushy` | aback → beefy → biddy → bobby → buggy → bully |
-| `chart` | aback → cease → chaff → chain → champ → chard |
-| `craze` | aback → cease → chafe → crane → crate → crave |
-| `crowd` | aback → cello → choir → crony → cross → croup |
-| `drown` | aback → defer → dirty → droll → droop → dross |
-| `graze` | aback → dealt → erase → frame → grape → grave |
-| `grout` | aback → defer → girly → groom → gross → group |
-| `grown` | aback → defer → girly → groom → gross → group |
+| `adpao` | aahed → abada → addax → adjag → adlai → adman |
+| `adzes` | aahed → adder → adeem → adiel → adnex → advew |
+| `agaze` | aahed → abase → acale → agape → agate → agave |
+| `agron` | aahed → abbot → accoy → aflow → agios → agrom |
+| `aimed` | aahed → abbed → acned → added → agued → ailed |
+| `aired` | aahed → abbed → acned → added → agued → ailed |
+| `airer` | aahed → abbes → accel → aeger → after → aimer |
+| `aiver` | aahed → abbes → accel → aeger → after → aimer |
+| `aiyee` | aahed → abbes → accel → aeger → aimee → ainee |
+| `akasa` | aahed → abaca → afara → agama → ajaja → akala |
 

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 from wordle.batch.metrics import PuzzleResult, serialize_results, summarize_results
@@ -13,10 +15,23 @@ from wordle.data import WordleData
 from wordle.solver.strategy import SolverConfig, solve_secret
 
 
+def _solve_worker(args: tuple[str, list[str], list[str], SolverConfig | None]) -> PuzzleResult:
+    """Top-level function required for ProcessPoolExecutor pickling."""
+    secret, guess_words, answer_words, config = args
+    result = solve_secret(secret, guess_words, answer_words, config=config)
+    return PuzzleResult(
+        secret=secret,
+        solved=result.solved,
+        turns_taken=result.turns_taken,
+        words_tried=result.words_tried,
+        mode_trace=result.mode_trace,
+    )
+
+
 async def run_batch(
     data: WordleData,
     *,
-    concurrency: int = 16,
+    concurrency: int | None = None,
     limit: int | None = None,
     reports_dir: Path = REPORTS_DIR,
     config: SolverConfig | None = None,
@@ -25,30 +40,14 @@ async def run_batch(
     if limit is not None:
         answers = answers[:limit]
 
-    semaphore = asyncio.Semaphore(concurrency)
     guess_words = list(data.guess_words)
+    workers = concurrency or os.cpu_count() or 4
+    loop = asyncio.get_running_loop()
+    args_list = [(secret, guess_words, answers, config) for secret in answers]
 
-    async def worker(secret: str) -> PuzzleResult:
-        async with semaphore:
-            result = solve_secret(secret, guess_words, answers, config=config)
-            return PuzzleResult(
-                secret=secret,
-                solved=result.solved,
-                turns_taken=result.turns_taken,
-                words_tried=result.words_tried,
-                mode_trace=result.mode_trace,
-            )
-
-    tasks = [asyncio.create_task(worker(secret)) for secret in answers]
-    results: list[PuzzleResult] = []
-
-    try:
-        for completed in asyncio.as_completed(tasks):
-            results.append(await completed)
-    except asyncio.CancelledError:
-        for task in tasks:
-            task.cancel()
-        raise
+    with ProcessPoolExecutor(max_workers=workers) as pool:
+        futures = [loop.run_in_executor(pool, _solve_worker, args) for args in args_list]
+        results: list[PuzzleResult] = list(await asyncio.gather(*futures))
 
     summary = summarize_results(results)
     reports_dir.mkdir(parents=True, exist_ok=True)

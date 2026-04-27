@@ -1,129 +1,129 @@
 {
-  "total_puzzles": 2315,
-  "solved": 2257,
-  "failed": 58,
-  "solve_rate": 0.9749460043196544,
+  "total_puzzles": 18783,
+  "solved": 13620,
+  "failed": 5163,
+  "solve_rate": 0.7251237821434275,
   "turns_histogram": {
     "1": 1,
-    "2": 56,
-    "3": 407,
-    "4": 861,
-    "5": 722,
-    "6": 210
+    "2": 123,
+    "3": 1151,
+    "4": 3369,
+    "5": 4807,
+    "6": 4169
   },
-  "forced_hail_mary_turn4_count": 1851,
-  "average_turns_solved": 4.274700930438636,
-  "median_turns_solved": 4,
-  "p90_turns_solved": 5.0,
+  "forced_hail_mary_turn4_count": 17508,
+  "average_turns_solved": 4.862334801762114,
+  "median_turns_solved": 5.0,
+  "p90_turns_solved": 6.0,
   "top_failures": [
     {
-      "secret": "bunny",
+      "secret": "adpao",
       "words_tried": [
-        "aback",
-        "beefy",
-        "biddy",
-        "bobby",
-        "buggy",
-        "bully"
+        "aahed",
+        "abada",
+        "addax",
+        "adjag",
+        "adlai",
+        "adman"
       ]
     },
     {
-      "secret": "burly",
+      "secret": "adzes",
       "words_tried": [
-        "aback",
-        "beefy",
-        "biddy",
-        "bobby",
-        "buggy",
-        "bully"
+        "aahed",
+        "adder",
+        "adeem",
+        "adiel",
+        "adnex",
+        "advew"
       ]
     },
     {
-      "secret": "bushy",
+      "secret": "agaze",
       "words_tried": [
-        "aback",
-        "beefy",
-        "biddy",
-        "bobby",
-        "buggy",
-        "bully"
+        "aahed",
+        "abase",
+        "acale",
+        "agape",
+        "agate",
+        "agave"
       ]
     },
     {
-      "secret": "chart",
+      "secret": "agron",
       "words_tried": [
-        "aback",
-        "cease",
-        "chaff",
-        "chain",
-        "champ",
-        "chard"
+        "aahed",
+        "abbot",
+        "accoy",
+        "aflow",
+        "agios",
+        "agrom"
       ]
     },
     {
-      "secret": "craze",
+      "secret": "aimed",
       "words_tried": [
-        "aback",
-        "cease",
-        "chafe",
-        "crane",
-        "crate",
-        "crave"
+        "aahed",
+        "abbed",
+        "acned",
+        "added",
+        "agued",
+        "ailed"
       ]
     },
     {
-      "secret": "crowd",
+      "secret": "aired",
       "words_tried": [
-        "aback",
-        "cello",
-        "choir",
-        "crony",
-        "cross",
-        "croup"
+        "aahed",
+        "abbed",
+        "acned",
+        "added",
+        "agued",
+        "ailed"
       ]
     },
     {
-      "secret": "drown",
+      "secret": "airer",
       "words_tried": [
-        "aback",
-        "defer",
-        "dirty",
-        "droll",
-        "droop",
-        "dross"
+        "aahed",
+        "abbes",
+        "accel",
+        "aeger",
+        "after",
+        "aimer"
       ]
     },
     {
-      "secret": "graze",
+      "secret": "aiver",
       "words_tried": [
-        "aback",
-        "dealt",
-        "erase",
-        "frame",
-        "grape",
-        "grave"
+        "aahed",
+        "abbes",
+        "accel",
+        "aeger",
+        "after",
+        "aimer"
       ]
     },
     {
-      "secret": "grout",
+      "secret": "aiyee",
       "words_tried": [
-        "aback",
-        "defer",
-        "girly",
-        "groom",
-        "gross",
-        "group"
+        "aahed",
+        "abbes",
+        "accel",
+        "aeger",
+        "aimee",
+        "ainee"
       ]
     },
     {
-      "secret": "grown",
+      "secret": "akasa",
       "words_tried": [
-        "aback",
-        "defer",
-        "girly",
-        "groom",
-        "gross",
-        "group"
+        "aahed",
+        "abaca",
+        "afara",
+        "agama",
+        "ajaja",
+        "akala"
       ]
     }
   ]

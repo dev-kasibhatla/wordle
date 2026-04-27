@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-uv run pytest
+# Skip @pytest.mark.slow tests by default; they run separately via run_slow_tests.sh
+uv run pytest -m "not slow"
