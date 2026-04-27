@@ -212,6 +212,7 @@ class PlayGame {
     }
 
     this._busy = true;  // lock all input
+    this._showLoadingState();
     const guess = this.currentInput.join('');
 
     try {
@@ -243,8 +244,23 @@ class PlayGame {
       this._shakeRow(this.currentRow);
       showToast(this.toast, e.message, 'error');
     } finally {
+      this._clearLoadingState();
       this._busy = false;
     }
+  }
+
+  _showLoadingState() {
+    // Disable all keyboard keys
+    document.querySelectorAll('.key').forEach(k => k.disabled = true);
+    // Show loading indicator in toast
+    showToast(this.toast, '⏳ Checking...', '', 60000);
+  }
+
+  _clearLoadingState() {
+    // Re-enable all keyboard keys
+    document.querySelectorAll('.key').forEach(k => k.disabled = false);
+    // Clear toast by removing visible class
+    this.toast.classList.remove('visible');
   }
 
   async _revealRow(row, guess, scores) {

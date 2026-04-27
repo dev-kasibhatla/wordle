@@ -223,13 +223,16 @@ header {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, transform 0.08s;
+  touch-action: manipulation;
+  will-change: transform, background, color;
+  transition: background 0.12s ease, color 0.12s ease, transform 0.06s ease;
   flex: 1;
   max-width: 42px;
 }
 
 .key.wide { max-width: 64px; font-size: 11px; }
-.key:active { transform: scale(0.93); }
+.key:active { transform: scale(0.92); }
+.key:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .key.green  { background: var(--green);      border: 2px solid var(--green);      color: #fff; }
 .key.yellow { background: var(--yellow);     border: 2px solid var(--yellow);     color: #fff; }
@@ -507,8 +510,19 @@ header {
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 420px) {
   :root { --tile-size: 54px; --tile-sm: 42px; }
-  .key { height: 50px; }
+  .keyboard { gap: 6px; }
+  .key-row { gap: 3px; }
+  .key { height: 50px; max-width: 38px; font-size: 12px; }
+  .key.wide { max-width: 56px; }
   .logo { font-size: 22px; }
+}
+
+@media (max-width: 360px) {
+  :root { --tile-size: 48px; --tile-sm: 36px; }
+  .keyboard { gap: 4px; }
+  .key-row { gap: 2px; }
+  .key { height: 44px; max-width: 32px; font-size: 11px; padding: 0 2px; }
+  .key.wide { max-width: 50px; }
 }
 
 /* ── Footer / public pages ───────────────────────────────────────────── */
