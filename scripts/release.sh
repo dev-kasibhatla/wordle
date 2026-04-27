@@ -3,10 +3,18 @@
 # Usage: ./scripts/release.sh [patch|minor|major]
 #
 # Harbor credentials must be in env (see push_harbor.sh for details).
+# Will load .env if present.
 set -euo pipefail
 
 PART="${1:-patch}"
 SCRIPTS="$(dirname "$0")"
+
+# Load .env if present (never committed)
+if [[ -f ".env" ]]; then
+  set +u
+  source .env
+  set -u
+fi
 
 echo "=== Wordle Release ==="
 echo
@@ -27,6 +35,12 @@ echo
 echo "[3/7] Reinstalling package..."
 uv pip install -e . --quiet
 echo "Installed wordle==$NEW_VERSION"
+echo
+
+# 3.5. Update lockfile after version bump
+echo "[3.5/7] Updating lockfile..."
+uv lock --quiet
+echo "Lockfile updated"
 echo
 
 # 4. Validate release candidate
