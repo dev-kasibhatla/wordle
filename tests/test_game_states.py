@@ -33,12 +33,10 @@ ANSWERS = ("cigar", "awake", "serve")
 @pytest.fixture(autouse=True)
 def _reset_limiters():
     for lim in (_GAME_LIMITER, _SOLVER_LIMITER):
-        lim._ip.clear()
-        lim._all.clear()
+        lim.reset()
     yield
     for lim in (_GAME_LIMITER, _SOLVER_LIMITER):
-        lim._ip.clear()
-        lim._all.clear()
+        lim.reset()
 
 
 def _client(seed: int = 0) -> TestClient:

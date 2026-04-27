@@ -1,6 +1,6 @@
-# Wordle Solver Report — Mode B (Hail Mary Only)
+# Wordle Solver Report Mode B (Hail-Mary Only)
 
-Evaluated against 2315 official Wordle puzzles.
+Tested on 2315 official Wordle answers.
 
 ---
 
@@ -14,19 +14,19 @@ Evaluated against 2315 official Wordle puzzles.
 | Solve rate | 97.5% |
 | Average turns (solved) | 4.27 |
 | Median turns (solved) | 4.0 |
-| 90th-percentile turns | 5.0 |
+| 90th percentile turns | 5.0 |
 
 ## Solve Rate
 
 ![Solve Rate](graphs/solve_rate.png)
 
-Mode B skips discovery entirely. Every guess is the highest-ranked surviving candidate from turn 1, a pure hail-mary strategy.
+Mode B commits immediately. Every guess is the best candidate. No discovery, no hesitation.
 
 ## Turns Distribution
 
 ![Turns Distribution](graphs/turns_histogram.png)
 
-Each bar shows how many puzzles were solved in that many turns. Puzzles not solved within 6 turns are counted as failures.
+Each bar shows how many puzzles were solved in that many turns. Anything beyond turn 6 is a failure.
 
 ## Failures (58 puzzles)
 
