@@ -88,7 +88,7 @@ header {
   padding: 7px 18px;
   border-radius: 26px;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
+  transition: background 0.135s, color 0.135s;
 }
 
 .tab.active, .tab:hover {
@@ -132,7 +132,7 @@ header {
   color: var(--text);
   background: var(--surface);
   user-select: none;
-  transition: border-color 0.1s;
+  transition: border-color 0.075s;
   perspective: 250px;
 }
 
@@ -225,7 +225,7 @@ header {
   cursor: pointer;
   touch-action: manipulation;
   will-change: transform, background, color;
-  transition: background 0.12s ease, color 0.12s ease, transform 0.06s ease;
+  transition: background 0.09s ease, color 0.09s ease, transform 0.045s ease;
   flex: 1;
   max-width: 42px;
 }
@@ -257,7 +257,7 @@ header {
   border-radius: 6px;
   padding: 8px 20px;
   opacity: 0;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.1125s ease, transform 0.1125s ease;
   pointer-events: none;
   white-space: nowrap;
 }
@@ -296,7 +296,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.12s ease, transform 0.06s ease;
+  transition: background 0.09s ease, transform 0.045s ease;
   touch-action: manipulation;
   will-change: transform, background;
 }
@@ -322,7 +322,7 @@ header {
   opacity: 0;
   visibility: hidden;
   transform: translateY(8px);
-  transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.1125s ease, visibility 0.1125s ease, transform 0.1125s ease;
   z-index: 10;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -345,7 +345,7 @@ header {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition: background 0.09s ease, color 0.09s ease;
 }
 
 .menu-item:hover {
@@ -374,7 +374,7 @@ header {
   padding: 12px 28px;
   height: 56px;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.1s;
+  transition: opacity 0.1125s ease, transform 0.075s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -397,7 +397,7 @@ header {
   font-weight: 600;
   padding: 10px 22px;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color 0.1125s, border-color 0.1125s;
 }
 
 .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
@@ -437,7 +437,7 @@ header {
   padding: 12px 16px;
   width: 100%;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.1125s;
 }
 
 .word-input:focus { border-color: var(--accent); }
@@ -457,7 +457,7 @@ header {
   font-weight: 600;
   padding: 10px 12px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.1125s, color 0.1125s, border-color 0.1125s;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -554,7 +554,7 @@ header {
   user-select: none;
   color: var(--text);
   background: var(--surface2);
-  transition: background 0.12s, border-color 0.12s;
+  transition: background 0.09s, border-color 0.09s;
   flex-shrink: 0;
 }
 
@@ -589,7 +589,7 @@ header {
   cursor: pointer;
   line-height: 1;
   padding: 4px;
-  transition: color 0.12s;
+  transition: color 0.09s;
 }
 
 .az-remove:hover { color: #ff8080; }
@@ -680,7 +680,7 @@ header {
   color: var(--muted);
   text-decoration: none;
   border-bottom: 1px solid rgba(107, 107, 128, 0.3);
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.09s ease, color 0.09s ease, border-color 0.09s ease;
 }
 
 .attribution a:hover {
@@ -744,7 +744,7 @@ header {
   padding: 0;
   border: none;
   background: none;
-  transition: color 0.15s ease;
+  transition: color 0.1125s ease;
 }
 
 .footer-link::before {
@@ -853,7 +853,7 @@ header {
   color: #b6f2cd;
   text-decoration: none;
   border-bottom: 1px solid rgba(182, 242, 205, 0.3);
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: color 0.1125s ease, border-color 0.1125s ease;
 }
 
 .page-content a:hover {
