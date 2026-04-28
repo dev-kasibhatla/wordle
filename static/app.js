@@ -1,5 +1,5 @@
 // Wordle Web App — Plain ES Module
-// All three tabs: Play, Auto Solve, Puzzle State
+// All three tabs: Play, Auto Solve, Solver
 
 const API = '/api';
 const ROWS = 6, COLS = 5;
