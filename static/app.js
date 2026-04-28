@@ -96,6 +96,7 @@ class PlayGame {
       }
     });
     this.shareBtn.addEventListener('click', () => this._share());
+    this.enterBtn.addEventListener('click', () => this._submitGuess());
     this.newGame();
   }
 
@@ -255,7 +256,7 @@ class PlayGame {
         this.shareBtn.style.display = '';
         this._storeSolved(data.history, data.secret);
       } else if (data.status === 'failed') {
-        showToast(this.toast, (data.secret || '?').toUpperCase(), 'error', 5000);
+        this._showGameOverDialog(data.secret);
       }
 
       this._highlightActiveRow();
@@ -266,6 +267,27 @@ class PlayGame {
       this._clearLoadingState();
       this._busy = false;
     }
+  }
+
+  _showGameOverDialog(secret) {
+    const word = (secret || '?').toUpperCase();
+    const existing = document.getElementById('play-gameover-dialog');
+    if (existing) existing.remove();
+    const dialog = document.createElement('div');
+    dialog.id = 'play-gameover-dialog';
+    dialog.className = 'gameover-dialog';
+    dialog.innerHTML = `
+      <div class="gameover-content">
+        <p class="gameover-title">Hard luck!</p>
+        <p class="gameover-word">${word}</p>
+        <button class="btn-primary gameover-btn" id="play-gameover-newgame">Play again</button>
+      </div>
+    `;
+    this.board.parentElement.insertBefore(dialog, this.board.nextSibling);
+    dialog.querySelector('#play-gameover-newgame').addEventListener('click', () => {
+      dialog.remove();
+      this.newGame();
+    });
   }
 
   _showLoadingState() {
