@@ -1,0 +1,19 @@
+{
+  "total_puzzles": 2316,
+  "solved": 2316,
+  "failed": 0,
+  "solve_rate": 1.0,
+  "turns_histogram": {
+    "1": 1,
+    "2": 83,
+    "3": 1231,
+    "4": 915,
+    "5": 85,
+    "6": 1
+  },
+  "forced_hail_mary_turn4_count": 0,
+  "average_turns_solved": 3.4330742659758204,
+  "median_turns_solved": 3.0,
+  "p90_turns_solved": 4.0,
+  "top_failures": []
+}

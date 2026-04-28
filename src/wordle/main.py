@@ -10,7 +10,7 @@ import uvicorn
 
 from wordle.api.app import create_app
 from wordle.batch.runner import run_batch
-from wordle.constants import REPORTS_MODE_A_DIR, REPORTS_MODE_B_DIR
+from wordle.constants import REPORTS_MODE_A_DIR, REPORTS_MODE_B_DIR, REPORTS_MODE_C_DIR
 from wordle.data import find_missing_answers, load_wordle_data
 from wordle.solver.strategy import SolverConfig
 
@@ -27,15 +27,19 @@ def run_batch_cmd() -> None:
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument(
         "--mode",
-        choices=["a", "b"],
+        choices=["a", "b", "c"],
         default="a",
-        help="a=investigation+hail-mary, b=hail-mary only from turn 1",
+        help="a=investigation+hail-mary, b=hail-mary only, c=entropy-optimal",
     )
     args = parser.parse_args()
 
     data = load_wordle_data()
     config = SolverConfig(mode=args.mode)
-    reports_dir = REPORTS_MODE_A_DIR if args.mode == "a" else REPORTS_MODE_B_DIR
+    reports_dir = {
+        "a": REPORTS_MODE_A_DIR,
+        "b": REPORTS_MODE_B_DIR,
+        "c": REPORTS_MODE_C_DIR,
+    }[args.mode]
 
     _, summary = asyncio.run(_run_batch_async(data, args.concurrency, args.limit, config, reports_dir))
     print(json.dumps(summary, indent=2))

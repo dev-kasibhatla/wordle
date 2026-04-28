@@ -67,7 +67,7 @@ class GuessResponse(BaseModel):
 
 class SolverRunRequest(BaseModel):
     secret: str
-    mode: str = Field(default="a", pattern="^(a|b)$")
+    mode: str = Field(default="a", pattern="^(a|b|c)$")
 
 
 class SolverTurn(BaseModel):
@@ -93,7 +93,7 @@ class AnalyzeGuessItem(BaseModel):
 
 class SolverAnalyzeRequest(BaseModel):
     history: list[AnalyzeGuessItem]
-    mode: str = Field(default="a", pattern="^(a|b)$")
+    mode: str = Field(default="a", pattern="^(a|b|c)$")
     secret: str | None = None  # if supplied, enables auto-finish
 
 
