@@ -1,130 +1,19 @@
 {
-  "total_puzzles": 2315,
-  "solved": 2273,
-  "failed": 42,
-  "solve_rate": 0.9818574514038877,
+  "total_puzzles": 2316,
+  "solved": 2316,
+  "failed": 0,
+  "solve_rate": 1.0,
   "turns_histogram": {
-    "1": 1,
-    "2": 120,
-    "3": 838,
-    "4": 883,
-    "5": 336,
-    "6": 95
+    "1": 0,
+    "2": 69,
+    "3": 846,
+    "4": 1124,
+    "5": 261,
+    "6": 16
   },
-  "forced_hail_mary_turn4_count": 1356,
-  "average_turns_solved": 3.755829300483942,
-  "median_turns_solved": 4,
+  "forced_hail_mary_turn4_count": 1401,
+  "average_turns_solved": 3.7016407599309153,
+  "median_turns_solved": 4.0,
   "p90_turns_solved": 5.0,
-  "top_failures": [
-    {
-      "secret": "crazy",
-      "words_tried": [
-        "alert",
-        "acorn",
-        "chair",
-        "crack",
-        "cramp",
-        "crass"
-      ]
-    },
-    {
-      "secret": "gazer",
-      "words_tried": [
-        "alert",
-        "baker",
-        "caper",
-        "eager",
-        "gamer",
-        "gayer"
-      ]
-    },
-    {
-      "secret": "grave",
-      "words_tried": [
-        "alert",
-        "baker",
-        "crane",
-        "drape",
-        "erase",
-        "frame"
-      ]
-    },
-    {
-      "secret": "graze",
-      "words_tried": [
-        "alert",
-        "baker",
-        "crane",
-        "drape",
-        "erase",
-        "frame"
-      ]
-    },
-    {
-      "secret": "grope",
-      "words_tried": [
-        "alert",
-        "rouse",
-        "broke",
-        "crone",
-        "drove",
-        "froze"
-      ]
-    },
-    {
-      "secret": "holly",
-      "words_tried": [
-        "alert",
-        "lousy",
-        "coyly",
-        "dolly",
-        "folly",
-        "golly"
-      ]
-    },
-    {
-      "secret": "homer",
-      "words_tried": [
-        "alert",
-        "rouse",
-        "boxer",
-        "corer",
-        "foyer",
-        "goner"
-      ]
-    },
-    {
-      "secret": "hover",
-      "words_tried": [
-        "alert",
-        "rouse",
-        "boxer",
-        "corer",
-        "foyer",
-        "goner"
-      ]
-    },
-    {
-      "secret": "joker",
-      "words_tried": [
-        "alert",
-        "rouse",
-        "boxer",
-        "corer",
-        "foyer",
-        "goner"
-      ]
-    },
-    {
-      "secret": "jolly",
-      "words_tried": [
-        "alert",
-        "lousy",
-        "coyly",
-        "dolly",
-        "folly",
-        "golly"
-      ]
-    }
-  ]
+  "top_failures": []
 }

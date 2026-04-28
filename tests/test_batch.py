@@ -6,8 +6,9 @@ from wordle.data import WordleData
 
 
 def test_batch_creates_reports(tmp_path: Path):
-    guesses = ("cigar", "rebut", "sissy", "humph", "awake", "serve")
+    # Answers are a strict subset; guess pool includes extra non-answer words.
     answers = ("cigar", "awake", "serve")
+    guesses = answers + ("rebut", "sissy", "humph", "crane", "slate")
     data = WordleData(guess_words=guesses, official_answers=answers)
 
     results, summary = asyncio.run(run_batch(data, concurrency=2, reports_dir=tmp_path))

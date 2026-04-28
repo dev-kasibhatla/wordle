@@ -6,16 +6,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 import random
 
-from wordle.constants import DEFAULT_WORDS_PATH
+from wordle.constants import DEFAULT_WORDS_PATH, DEFAULT_GUESSES_PATH
 
 
 @dataclass(frozen=True)
 class WordleData:
-    """Single-source word list used for both guess validation and secret selection."""
+    """Dual-source word data: answers come from words.txt, guesses from both files."""
 
-    # Sorted tuple for deterministic ordering and random.choice compatibility.
+    # All valid guess words (answers + extended guess list) for gameplay and investigate phase.
     guess_words: tuple[str, ...]
-    # Same data — every word is a valid secret and a valid guess.
+    # Only words eligible to be the secret answer (from words.txt).
     official_answers: tuple[str, ...]
     # Frozenset for O(1) membership checks; computed once from guess_words.
     _word_set: frozenset[str] = field(default_factory=frozenset, init=False, compare=False, hash=False)
@@ -28,7 +28,7 @@ class WordleData:
         return self._word_set
 
 
-def load_words(path: Path = DEFAULT_WORDS_PATH) -> tuple[str, ...]:
+def load_words(path: Path) -> tuple[str, ...]:
     """Load and deduplicate 5-letter words from a plain word-per-line file."""
     seen: set[str] = set()
     words: list[str] = []
@@ -41,10 +41,24 @@ def load_words(path: Path = DEFAULT_WORDS_PATH) -> tuple[str, ...]:
     return tuple(words)
 
 
-def load_wordle_data(path: Path = DEFAULT_WORDS_PATH) -> WordleData:
-    """Load WordleData from the single canonical word list."""
-    words = load_words(path)
-    return WordleData(guess_words=words, official_answers=words)
+def load_wordle_data(
+    answers_path: Path = DEFAULT_WORDS_PATH,
+    guesses_path: Path = DEFAULT_GUESSES_PATH,
+) -> WordleData:
+    """Load WordleData from separate answers and extended guess list files.
+
+    Answers (words.txt) are the only valid secrets.
+    Guess words = answers union allowed-guesses, used for gameplay and investigate phase.
+    """
+    answer_words = load_words(answers_path)
+    guess_only_words = load_words(guesses_path)
+    answer_set = set(answer_words)
+    # Merge: answers first (preserve order), then extra guess-only words
+    combined: list[str] = list(answer_words)
+    for w in guess_only_words:
+        if w not in answer_set:
+            combined.append(w)
+    return WordleData(guess_words=tuple(combined), official_answers=answer_words)
 
 
 def find_missing_answers(data: WordleData) -> list[str]:
