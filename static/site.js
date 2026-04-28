@@ -14,7 +14,7 @@ function renderFooter(container, versionLabel) {
     <div class="footer-panel">
       <div class="footer-links-group">${links}</div>
       <a class="footer-badge" href="https://github.com/dev-kasibhatla/wordle" target="_blank" rel="noreferrer">
-        <img src="https://img.shields.io/badge/GitHub-Open%20Source-111827?logo=github&logoColor=white" alt="Open source on GitHub" />
+        <img src="https://img.shields.io/badge/-Open%20Source-111827?logo=github&logoColor=white" alt="Open source on GitHub" />
       </a>
       <span class="version-badge">${versionLabel}</span>
     </div>
