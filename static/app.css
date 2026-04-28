@@ -13,8 +13,8 @@
   --grey-tile: #3a3a45;
   --empty: transparent;
   --accent: #4caf82;
-  --key-bg: #2d2d38;
-  --key-text: #d0d0e0;
+  --key-bg: #3b4a6b;
+  --key-text: #c8d4ee;
   --radius: 6px;
   --radius-lg: 12px;
   --font: 'Inter', system-ui, sans-serif;
@@ -237,6 +237,38 @@ header {
 .key.green  { background: var(--green);      border: 2px solid var(--green);      color: #fff; }
 .key.yellow { background: var(--yellow);     border: 2px solid var(--yellow);     color: #fff; }
 .key.grey   { background: var(--grey-tile);  border: 2px solid var(--grey-tile);  color: #fff; }
+
+/* ── Game-over dialog ────────────────────────────────────────────── */
+.gameover-dialog {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 4px;
+}
+.gameover-content {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.gameover-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.gameover-word {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text);
+}
+.gameover-btn { margin-top: 4px; }
 
 /* ── Toast ───────────────────────────────────────────────────────────── */
 .toast {
